@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XFG — Builder Grafiku Zajęć</title>
+<link href="https://fonts.googleapis.com/css2?family=HK+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --xred:#c80000;--xblue:#146496;--xnavy:#052d46;--xnavy2:#0a3d5e;
+  --white:#fff;--gray-bg:#F2F4F6;--gray-line:#DDE1E7;--gray-mid:#8A93A0;
+  --sidebar-w:300px;--header-h:58px;--font:'HK Grotesk',sans-serif;
+}
+body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-height:100vh;display:flex;flex-direction:column;font-size:14px}
+
+#topbar{height:var(--header-h);background:var(--xnavy);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(0,0,0,.35)}
+.logo{font-weight:800;font-size:19px;color:var(--white);display:flex;align-items:center;gap:5px}
+.logo-x{color:var(--xred);font-size:23px}
+.logo span{color:var(--xblue)}
+.sep{flex:1}
+.topbar-input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:5px;color:white;padding:5px 10px;font-family:var(--font);font-size:13px;width:150px;outline:none;transition:border .2s}
+.topbar-input::placeholder{color:rgba(255,255,255,.4)}
+.topbar-input:focus{border-color:var(--xblue)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:5px;border:none;font-family:var(--font);font-weight:700;font-size:13px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-red{background:var(--xred);color:white}.btn-red:hover{background:#a80000}
+.btn-blue{background:var(--xblue);color:white}.btn-blue:hover{background:#0e5080}
+.btn-navy{background:var(--xnavy2);color:white}.btn-navy:hover{background:#062035}
+.btn-green{background:#166534;color:white}.btn-green:hover{background:#14532d}
+.btn-ghost{background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.22)}.btn-ghost:hover{border-color:var(--xblue);color:#7cc4e8}
+.btn-sm{padding:3px 9px;font-size:11px}
+.btn-danger{background:#b91c1c;color:white}.btn-danger:hover{background:#991818}
+
+#app{display:flex;flex:1;overflow:hidden;height:calc(100vh - var(--header-h))}
+
+#sidebar{width:var(--sidebar-w);background:white;border-right:1px solid var(--gray-line);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.sb-section{padding:14px;border-bottom:1px solid var(--gray-line)}
+.sb-title{font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-mid);margin-bottom:10px}
+.fr{margin-bottom:8px}
+.fr label{display:block;font-size:10px;font-weight:700;color:var(--gray-mid);margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
+.fr input,.fr select,.fr textarea{width:100%;padding:6px 9px;border:1px solid var(--gray-line);border-radius:5px;font-family:var(--font);font-size:12.5px;color:var(--xnavy);outline:none;transition:border .15s;background:var(--gray-bg)}
+.fr input:focus,.fr select:focus,.fr textarea:focus{border-color:var(--xblue);background:white}
+.fr textarea{resize:vertical;min-height:48px;font-size:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.day-btns{display:flex;gap:4px;flex-wrap:wrap}
+.day-btn{padding:3px 7px;border-radius:4px;background:var(--gray-bg);border:1px solid var(--gray-line);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--xnavy);font-family:var(--font)}
+.day-btn.active{background:var(--xnavy);color:white;border-color:var(--xnavy)}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:4px}
+.cat-chip{border-radius:5px;padding:4px 3px;text-align:center;cursor:pointer;transition:all .15s;border:2px solid transparent;font-size:9px;font-weight:700;color:white;line-height:1.2}
+.cat-chip.active{border-color:white;transform:scale(1.06);box-shadow:0 0 0 2px var(--xnavy),0 2px 8px rgba(0,0,0,.2)}
+.cat-chip:hover:not(.active){opacity:.85;transform:scale(1.04)}
+
+#canvas-wrap{flex:1;overflow:auto;padding:28px;display:flex;flex-direction:column;align-items:center;gap:18px;background:#DDE3EC;background-image:radial-gradient(#c8d0dc 1px,transparent 1px);background-size:22px 22px}
+#canvas-toolbar{width:920px;display:flex;align-items:center;gap:10px}
+#canvas-toolbar .ct-label{font-weight:800;font-size:14px;letter-spacing:.5px;color:var(--xnavy)}
+
+#schedule{width:920px;background:white;border-radius:10px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.15)}
+.sch-header{background:var(--xnavy);padding:20px 24px 16px;display:flex;align-items:flex-end;justify-content:space-between}
+.sch-pretitle{font-weight:700;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--xblue);margin-bottom:3px}
+.sch-maintitle{font-weight:800;font-size:32px;letter-spacing:1px;text-transform:uppercase;color:white;line-height:1}
+.sch-maintitle span{color:var(--xred)}
+.sch-logo{font-weight:800;font-size:18px;color:rgba(255,255,255,.7)}
+.sch-logo b{color:var(--xred)}
+.sch-accent{height:3px;background:linear-gradient(90deg,var(--xred),var(--xblue),var(--xnavy))}
+.sch-grid{display:grid;grid-template-columns:56px repeat(7,1fr)}
+.day-hdr{background:var(--xnavy);color:white;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px 3px;border-right:1px solid rgba(255,255,255,.06)}
+.day-hdr.time-col{font-size:9px;color:rgba(255,255,255,.4);font-weight:500}
+.day-hdr.weekend{background:#0a2438}
+.day-hdr:last-child{border-right:none}
+.time-label{background:var(--xnavy);color:rgba(255,255,255,.45);font-weight:600;font-size:11px;text-align:center;padding:6px 2px;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;line-height:1}
+.day-cell{border-right:1px solid var(--gray-line);border-top:1px solid var(--gray-line);padding:2px;min-height:48px;position:relative;vertical-align:top}
+.day-cell.weekend{background:rgba(5,45,70,.03)}
+.day-cell.empty-slot{background:rgba(240,242,245,.6)}
+.day-cell:last-child{border-right:none}
+.empty-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--gray-line);cursor:pointer;transition:color .15s}
+.empty-hint:hover{color:var(--xblue)}
+
+.class-pill{border-radius:5px;padding:4px 6px;margin-bottom:2px;cursor:pointer;position:relative;transition:transform .1s,box-shadow .1s;border-left:3px solid rgba(0,0,0,.15);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.class-pill:hover{transform:scale(1.01);box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.pill-name{font-weight:800;font-size:11px;color:white!important;line-height:1.1}
+.pill-meta{font-size:9px;color:rgba(255,255,255,.9)!important;margin-top:1px;line-height:1.3}
+.pill-zone{font-size:8.5px;color:rgba(255,255,255,.75)!important;font-style:italic;margin-top:1px}
+.pill-actions{position:absolute;top:2px;right:2px;display:none;gap:2px}
+.class-pill:hover .pill-actions{display:flex}
+.pill-btn{background:rgba(0,0,0,.28);color:white;border:none;border-radius:3px;width:15px;height:15px;font-size:9px;line-height:15px;text-align:center;cursor:pointer;font-family:monospace}
+.pill-btn:hover{background:rgba(0,0,0,.55)}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px 12px;background:#F8F9FA;border-top:1px solid var(--gray-line)}
+.legend-item{display:flex;align-items:center;gap:4px}
+.legend-dot{width:9px;height:9px;border-radius:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.legend-label{font-size:9.5px;color:var(--gray-mid);font-weight:500}
+
+#settings-panel{position:fixed;right:0;top:var(--header-h);width:310px;height:calc(100vh - var(--header-h));background:white;border-left:1px solid var(--gray-line);padding:18px;overflow-y:auto;transform:translateX(100%);transition:transform .25s;z-index:150;box-shadow:-4px 0 24px rgba(0,0,0,.12)}
+#settings-panel.open{transform:translateX(0)}
+#settings-panel h3{font-weight:800;font-size:16px;margin-bottom:14px;color:var(--xnavy)}
+.settings-section{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--gray-line)}
+.settings-section:last-child{border-bottom:none}
+.settings-section h4{font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--gray-mid);margin-bottom:8px}
+#panel-close{position:absolute;top:14px;right:14px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--gray-mid);line-height:1}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:white;border-radius:10px;padding:24px;width:480px;box-shadow:0 20px 60px rgba(0,0,0,.3);transform:translateY(10px);transition:transform .2s;max-height:90vh;overflow-y:auto}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal h2{font-weight:800;font-size:20px;margin-bottom:6px;color:var(--xnavy)}
+.modal-accent{height:3px;background:linear-gradient(90deg,var(--xred),var(--xblue));border-radius:2px;margin-bottom:16px}
+.modal-footer{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+
+@media print{
+  @page{margin:8mm;size:A4 landscape}
+  html,body{height:auto!important;overflow:visible!important;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #topbar,#sidebar,#canvas-toolbar,#settings-panel,.legend,.modal-overlay{display:none!important}
+  #app{display:block!important;height:auto!important;overflow:visible!important}
+  #canvas-wrap{padding:0!important;background:white!important;display:block!important;height:auto!important;overflow:visible!important}
+  #schedule{width:100%!important;box-shadow:none!important;border-radius:0!important}
+  .sch-grid{overflow:visible!important}
+  .class-pill{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .pill-actions,.empty-hint{display:none!important}
+  .day-cell{min-height:0}
+  .day-cell.empty-slot{min-height:14px}
+}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="logo"><span class="logo-x">X</span><span>treme</span><span style="opacity:.4;font-weight:300;font-size:14px;margin:0 3px">|</span>Grafik Zajęć</div>
+  <div class="sep"></div>
+  <input type="text" id="club-input" class="topbar-input" placeholder="Nazwa klubu..." value="Sochaczew">
+  <button class="btn btn-ghost" onclick="toggleSettings()">⚙ Ustawienia</button>
+  <button class="btn btn-green" onclick="exportJSON()">💾 Zapisz grafik</button>
+  <button class="btn btn-ghost" onclick="document.getElementById('load-file').click()">📂 Wczytaj grafik</button>
+  <input type="file" id="load-file" accept=".xfg,.json" style="display:none" onchange="importJSON(event)">
+  <button class="btn btn-danger btn-sm" onclick="clearAll()" style="border:1px solid rgba(255,100,100,.3)">✕ Wyczyść</button>
+  <button class="btn btn-blue" onclick="window.print()">🖨 Drukuj / PDF</button>
+</div>
+
+<div id="app">
+<div id="sidebar">
+  <div class="sb-section">
+    <div class="sb-title">➕ Dodaj zajęcia</div>
+    <div class="fr">
+      <label>Nazwa zajęć</label>
+      <input type="text" id="f-name" list="class-names-list" placeholder="Wybierz lub wpisz..." oninput="autoCategory('f')">
+      <datalist id="class-names-list"></datalist>
+    </div>
+    <div class="fr"><label>Instruktor</label><input type="text" id="f-instructor" placeholder="Imię i nazwisko"></div>
+    <div class="fr"><label>Strefa / Sala</label><input type="text" id="f-zone" list="zone-list-dl" placeholder="np. Studio, Sala Główna..."><datalist id="zone-list-dl"></datalist></div>
+    <div class="grid3">
+      <div class="fr"><label>Godz.</label><select id="f-hour"></select></div>
+      <div class="fr"><label>Min.</label><select id="f-minute"><option value="00">:00</option><option value="15">:15</option><option value="30">:30</option><option value="45">:45</option></select></div>
+      <div class="fr"><label>Czas (min)</label><select id="f-duration"><option>30</option><option>45</option><option selected>50</option><option>55</option><option>60</option><option>75</option><option>90</option></select></div>
+    </div>
+    <div class="fr"><label>Miejsca</label><input type="number" id="f-capacity" value="18" min="1" max="99"></div>
+    <div class="fr"><label>Dzień tygodnia</label>
+      <div class="day-btns" id="day-btns">
+        <div class="day-btn" data-day="0" onclick="toggleDay(this)">PN</div>
+        <div class="day-btn" data-day="1" onclick="toggleDay(this)">WT</div>
+        <div class="day-btn" data-day="2" onclick="toggleDay(this)">ŚR</div>
+        <div class="day-btn" data-day="3" onclick="toggleDay(this)">CZ</div>
+        <div class="day-btn" data-day="4" onclick="toggleDay(this)">PT</div>
+        <div class="day-btn" data-day="5" onclick="toggleDay(this)">SB</div>
+        <div class="day-btn" data-day="6" onclick="toggleDay(this)">ND</div>
+      </div>
+    </div>
+    <div class="fr"><label>Kategoria</label><div class="cat-grid" id="cat-grid"></div></div>
+    <button class="btn btn-red" style="width:100%;justify-content:center;margin-top:6px" onclick="addClass()">+ Dodaj zajęcia</button>
+  </div>
+  <div class="sb-section">
+    <div class="sb-title">Lista (<span id="class-count">0</span>)</div>
+    <div id="class-list" style="font-size:11.5px;color:var(--gray-mid)"><em>Brak zajęć.</em></div>
+  </div>
+</div>
+
+<div id="canvas-wrap">
+  <div id="canvas-toolbar">
+    <div class="ct-label" id="ct-label">SOCHACZEW</div>
+    <div class="sep"></div>
+    <span style="font-size:11px;color:var(--gray-mid)">Kliknij zajęcia by edytować · kliknij komórkę by dodać</span>
+  </div>
+  <div id="schedule">
+    <div class="sch-header">
+      <div>
+        <div class="sch-pretitle" id="sch-pretitle">XTREME FITNESS GYMS · SOCHACZEW</div>
+        <div class="sch-maintitle">HARMONOGRAM <span>ZAJĘĆ</span></div>
+      </div>
+      <div class="sch-logo"><img src="sygnet_xfg.png" alt="Xtreme Fitness Gyms" style="height:36px;"></div>
+    </div>
+    <div class="sch-accent"></div>
+    <div class="sch-grid" id="sch-grid"></div>
+    <div class="legend" id="legend"></div>
+  </div>
+</div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings-panel">
+  <button id="panel-close" onclick="toggleSettings()">✕</button>
+  <h3>⚙ Ustawienia</h3>
+  <div class="settings-section">
+    <h4>Wyświetlanie godzin</h4>
+    <div class="fr"><label>Godzina od</label><select id="set-hour-from" onchange="rebuildGrid()"></select></div>
+    <div class="fr"><label>Godzina do</label><select id="set-hour-to" onchange="rebuildGrid()"></select></div>
+    <div class="fr" style="display:flex;align-items:center;gap:8px;margin-top:4px">
+      <input type="checkbox" id="set-hide-empty" onchange="rebuildGrid()" style="width:auto">
+      <label for="set-hide-empty" style="text-transform:none;font-size:12px;letter-spacing:0;color:var(--xnavy);font-weight:500;margin:0">Ukryj puste godziny w druku</label>
+    </div>
+  </div>
+  <div class="settings-section">
+    <h4>Widoczne dni</h4>
+    <div class="day-btns" id="set-days">
+      <div class="day-btn active" data-day="0" onclick="toggleVisDay(this)">PN</div>
+      <div class="day-btn active" data-day="1" onclick="toggleVisDay(this)">WT</div>
+      <div class="day-btn active" data-day="2" onclick="toggleVisDay(this)">ŚR</div>
+      <div class="day-btn active" data-day="3" onclick="toggleVisDay(this)">CZ</div>
+      <div class="day-btn active" data-day="4" onclick="toggleVisDay(this)">PT</div>
+      <div class="day-btn active" data-day="5" onclick="toggleVisDay(this)">SB</div>
+      <div class="day-btn active" data-day="6" onclick="toggleVisDay(this)">ND</div>
+    </div>
+  </div>
+  <div class="settings-section">
+    <h4>Strefy / Sale</h4>
+    <p style="font-size:11px;color:var(--gray-mid);margin-bottom:8px;line-height:1.5">Zdefiniuj strefy dostępne w podpowiedziach.</p>
+    <div class="fr" style="display:flex;gap:6px">
+      <input type="text" id="extra-zone" placeholder="np. Studio, Sala A..." style="flex:1;margin:0">
+      <button class="btn btn-navy btn-sm" onclick="addExtraZone()" style="white-space:nowrap">+ Dodaj</button>
+    </div>
+    <div id="zone-list" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px"></div>
+  </div>
+</div>
+
+<!-- IMPORT PDF MODAL -->
+<div class="modal-overlay" id="import-modal">
+  <div class="modal">
+    <h2>Importuj dane grafiku</h2>
+    <div class="modal-accent"></div>
+    <p style="font-size:12px;color:var(--gray-mid);margin-bottom:10px;line-height:1.6">Wklej tekst z eksportu PDF. Builder rozpozna zajęcia automatycznie. Dzień tygodnia należy przypisać ręcznie po imporcie.</p>
+    <div class="fr"><textarea id="import-text" style="height:160px;font-size:11px;font-family:monospace" placeholder="50 min 18 miejsc&#10;Zumba&#10;18:00 - 18:50&#10;Dawid Komorowski"></textarea></div>
+    <div id="import-result" style="font-size:11.5px;color:var(--gray-mid)"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" style="color:var(--xnavy);border-color:var(--gray-line)" onclick="closeImport()">Anuluj</button>
+      <button class="btn btn-blue" onclick="parseImport()">Parsuj i dodaj</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h2 id="edit-title">Dodaj zajęcia</h2>
+    <div class="modal-accent"></div>
+    <div class="fr">
+      <label>Nazwa zajęć</label>
+      <input type="text" id="ef-name" list="class-names-list" oninput="autoCategory('ef')">
+    </div>
+    <div class="fr"><label>Instruktor</label><input type="text" id="ef-instructor" placeholder="Imię i nazwisko"></div>
+    <div class="fr"><label>Strefa / Sala</label><input type="text" id="ef-zone" list="zone-list-dl"></div>
+    <div class="grid3">
+      <div class="fr"><label>Godz.</label><select id="ef-hour"></select></div>
+      <div class="fr"><label>Min.</label><select id="ef-minute"><option value="00">:00</option><option value="15">:15</option><option value="30">:30</option><option value="45">:45</option></select></div>
+      <div class="fr"><label>Czas (min)</label><select id="ef-duration"><option>30</option><option>45</option><option selected>50</option><option>55</option><option>60</option><option>75</option><option>90</option></select></div>
+    </div>
+    <div class="fr"><label>Miejsca</label><input type="number" id="ef-capacity" value="18" min="1" max="99"></div>
+    <div class="fr">
+      <label>Dzień tygodnia</label>
+      <div class="day-btns" id="ef-day-btns">
+        <div class="day-btn" data-day="0" onclick="toggleEditDay(this)">PN</div>
+        <div class="day-btn" data-day="1" onclick="toggleEditDay(this)">WT</div>
+        <div class="day-btn" data-day="2" onclick="toggleEditDay(this)">ŚR</div>
+        <div class="day-btn" data-day="3" onclick="toggleEditDay(this)">CZ</div>
+        <div class="day-btn" data-day="4" onclick="toggleEditDay(this)">PT</div>
+        <div class="day-btn" data-day="5" onclick="toggleEditDay(this)">SB</div>
+        <div class="day-btn" data-day="6" onclick="toggleEditDay(this)">ND</div>
+      </div>
+    </div>
+    <div class="fr"><label>Kategoria</label><div class="cat-grid" id="ecat-grid"></div></div>
+    <div style="font-size:11px;color:var(--gray-mid);margin-top:4px;padding:8px;background:var(--gray-bg);border-radius:5px;line-height:1.5">
+      💡 Aby skopiować zajęcia na dodatkowe dni, zaznacz więcej dni powyżej. Każdy dzień zostanie zapisany jako niezależny wpis.
+    </div>
+    <div class="modal-footer">
+      <button id="edit-delete-btn" class="btn btn-danger" style="margin-right:auto" onclick="deleteFromEdit()">Usuń</button>
+      <button class="btn btn-ghost" style="color:var(--xnavy);border-color:var(--gray-line)" onclick="closeEdit()">Anuluj</button>
+      <button id="edit-save-btn" class="btn btn-red" onclick="saveEdit()">Zapisz</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DAYS=['Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota','Niedziela'];
+const DAYS_SHORT=['PN','WT','ŚR','CZ','PT','SB','ND'];
+const ALL_HOURS=['6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22'];
+
+const CATEGORIES=[
+  {id:'mind',    label:'Body & Mind',    color:'#5B8DD9'},
+  {id:'dance',   label:'Taneczne',       color:'#D4559A'},
+  {id:'spec',    label:'Specjalist.',    color:'#D4701F'},
+  {id:'cycling', label:'Rowerowe',       color:'#2AA68C'},
+  {id:'cardio',  label:'Cardio',         color:'#C8292B'},
+  {id:'strength',label:'Wzmacniające',   color:'#4C6EAA'},
+  {id:'express', label:'Express',        color:'#E0A020'},
+  {id:'outdoor', label:'Outdoor',        color:'#3A9E5F'},
+  {id:'xstart',  label:'X Start',        color:'#052d46'},
+  {id:'hyrox',   label:'HYROX®',         color:'#8B2FC9'},
+  {id:'licensed',label:'Licencjonowane', color:'#146496'},
+  {id:'other',   label:'Inne',           color:'#6B7888'},
+];
+
+const CLASS_NAMES={
+  mind:['Joga','Pilates','Stretching','Zdrowy kręgosłup','Body Art®','Mobility','Flow Body','Vinyasa Joga','Relax Your Body','Power Joga','AcroJoga','Yoga Wheel','Pilates Ball','Yin Joga'],
+  dance:['Zumba®','Zumba Gold','Step Dance','Step Basic','Belly Dance','Latino Dance','Salsation®','Dance Aerobic','Terapia tańcem','Bachata','High Heels','Sexy Dance','Twerk','Ritmo do Brazil','Hip Hop','Taniec użytkowy','Taniec nowoczesny'],
+  spec:['Muay Thai','Aeroboks','Aktywna ciąża','Podstawy samoobrony','Boks','Boks Basic','Pole Dance','Pole Dance Basic','MMA','Aktywny senior','Trampoliny','Piloxing®','Krav Maga','Power Cross','Power Cross Basic','TRX®','Jumping Frog®','Aktywna mama','10XTraining','Fight & Kick','Kettlebells','XFIGHT','Deep Work®','Animal Flow®','Strong Women','Kickboxing','Kangoo Jump','Muay Thai dla kobiet','LEVEL UP - Teen Training','Zapasy','Grappling','BJJ - Brazilian Jiu-Jitsu','Aerial Silks','Aerial Hoop'],
+  cycling:['Indoor Cycling','Spinning®','Indoor Cycling Basic'],
+  cardio:['Cardio Training','Fat Burning','Fat Burning Step','XTREME CARDIO','HIIT STEP®','Cross Cardio®','Biegaj z Xtreme','Bikini Cardio','HIIT'],
+  strength:['Turbo pupa','TBC','BPU','Płaski brzuch','Power Pump','Step Shape','Fit Ball','Brzuch+stretch','Kalistenika','Brazylijskie pośladki','Shape','Callanetics','Strong Nation®','Zumba Toning®','XTREME POWER','GT Training STRENGTH®','Functional Floor','Functional Step','Fitness Start','Bikini Shape','Hula Hop','Fit Band','Gimnastyka odchudzająca','Kalistenika Basic','Barre Pulse','Trening obwodowy'],
+  express:['Express obwód','Express pośladki','Express brzuch','Express cardio','Express stretch','TABATA'],
+  outdoor:['Outdoor'],
+  xstart:['X START'],
+  hyrox:['HYROX®'],
+  licensed:['Body Art®','Zumba®','Salsation®','Piloxing®','TRX®','Jumping Frog®','Deep Work®','Animal Flow®','Spinning®','HIIT STEP®','Cross Cardio®','Strong Nation®','Zumba Toning®','GT Training STRENGTH®'],
+  other:[]
+};
+
+// Build name→cat reverse map
+const NAME_TO_CAT={};
+(()=>{ for(const[cat,names] of Object.entries(CLASS_NAMES)) names.forEach(n=>{ if(!NAME_TO_CAT[n.toLowerCase()]) NAME_TO_CAT[n.toLowerCase()]=cat; }); })();
+
+// ── DATA MODEL ─────────────────────────────────────────────
+// IMPORTANT: each entry has exactly ONE day (integer 0-6), not an array.
+// This makes every entry fully independent — edit/delete affects only that entry.
+// "days" key is kept as [day] for backwards compat with any loaded files.
+
+let classes=[];      // [{name,instructor,zone,hour,minute,duration,capacity,cat,day}]
+let extraZones=[];
+let selectedDays=[];
+let selectedCat='cardio';
+let editCat='cardio';
+let editIdx=null;
+let editDays=[];     // used only in edit modal (multi-day = creates multiple entries on save)
+let visDays=[0,1,2,3,4,5,6];
+
+// ── HELPERS ────────────────────────────────────────────────
+function catColor(id){ return (CATEGORIES.find(c=>c.id===id)||CATEGORIES.find(c=>c.id==='other')).color; }
+
+function autoCategory(prefix){
+  const nameEl=document.getElementById(prefix===('f')?'f-name':'ef-name');
+  if(!nameEl)return;
+  const val=nameEl.value.toLowerCase().trim();
+  let found=NAME_TO_CAT[val];
+  if(!found){ for(const[n,cat] of Object.entries(NAME_TO_CAT)){ if(val.length>=3&&n.startsWith(val)){found=cat;break;} } }
+  if(!found)return;
+  if(prefix==='f'){selectedCat=found;refreshCatGrid('cat-grid','selectedCat');}
+  else{editCat=found;refreshCatGrid('ecat-grid','editCat');}
+}
+
+function getCatState(k){ return k==='selectedCat'?selectedCat:editCat; }
+function setCatState(k,v){ if(k==='selectedCat')selectedCat=v; else editCat=v; }
+
+function buildCatGrid(cid,sk){
+  const el=document.getElementById(cid); el.innerHTML='';
+  CATEGORIES.forEach(cat=>{
+    const chip=document.createElement('div');
+    chip.className='cat-chip'+(cat.id===getCatState(sk)?' active':'');
+    chip.style.background=cat.color; chip.textContent=cat.label; chip.title=cat.label;
+    chip.onclick=()=>{ setCatState(sk,cat.id); refreshCatGrid(cid,sk); };
+    el.appendChild(chip);
+  });
+}
+function refreshCatGrid(cid,sk){
+  document.getElementById(cid)?.querySelectorAll('.cat-chip').forEach((c,i)=>c.classList.toggle('active',CATEGORIES[i].id===getCatState(sk)));
+}
+
+function populateHourSelects(){
+  ['f-hour','ef-hour','set-hour-from','set-hour-to'].forEach(id=>{
+    const el=document.getElementById(id); el.innerHTML='';
+    ALL_HOURS.forEach(h=>{ const o=document.createElement('option'); o.value=h; o.textContent=h; el.appendChild(o); });
+  });
+  document.getElementById('f-hour').value='18';
+  document.getElementById('ef-hour').value='18';
+  document.getElementById('set-hour-from').value='6';
+  document.getElementById('set-hour-to').value='21';
+}
+
+function updateDatalist(){
+  const dl=document.getElementById('class-names-list'); dl.innerHTML='';
+  new Set(Object.values(CLASS_NAMES).flat()).forEach(n=>{ const o=document.createElement('option'); o.value=n; dl.appendChild(o); });
+  const zdl=document.getElementById('zone-list-dl'); zdl.innerHTML='';
+  extraZones.forEach(z=>{ const o=document.createElement('option'); o.value=z; zdl.appendChild(o); });
+}
+
+// ── GRID ───────────────────────────────────────────────────
+function getVisHours(){
+  const f=parseInt(document.getElementById('set-hour-from')?.value||6);
+  const t=parseInt(document.getElementById('set-hour-to')?.value||21);
+  return ALL_HOURS.filter(h=>parseInt(h)>=f&&parseInt(h)<=t);
+}
+function rebuildGrid(){initGrid();}
+function toggleVisDay(el){
+  const d=parseInt(el.dataset.day);
+  if(visDays.includes(d)){if(visDays.length===1)return;visDays=visDays.filter(x=>x!==d);el.classList.remove('active');}
+  else{visDays.push(d);visDays.sort();el.classList.add('active');}
+  initGrid();
+}
+
+function initGrid(){
+  const grid=document.getElementById('sch-grid'); grid.innerHTML='';
+  const hours=getVisHours(); const nCols=visDays.length;
+  grid.style.gridTemplateColumns=`56px repeat(${nCols},1fr)`;
+
+  const hideEmpty=document.getElementById('set-hide-empty')?.checked;
+
+  // Day headers
+  const thT=document.createElement('div'); thT.className='day-hdr time-col'; thT.textContent='godz.'; grid.appendChild(thT);
+  visDays.forEach(di=>{ const th=document.createElement('div'); th.className='day-hdr'+(di>=5?' weekend':''); th.textContent=DAYS[di]; grid.appendChild(th); });
+
+  hours.forEach(hour=>{
+    const hourHasClasses=classes.some(c=>{
+      const d=c.day!==undefined?c.day:(Array.isArray(c.days)?c.days[0]:0);
+      return c.hour===hour&&visDays.includes(d);
+    });
+    const hideThisRow=hideEmpty&&!hourHasClasses;
+
+    const tl=document.createElement('div');
+    tl.className='time-label'+(hourHasClasses?'':' empty-row');
+    tl.style.display=hideThisRow?'none':'';
+    tl.textContent=hour+':00';
+    grid.appendChild(tl);
+
+    visDays.forEach(di=>{
+      const cell=document.createElement('div');
+      const hasClass=classes.some(c=>{
+        const d=c.day!==undefined?c.day:(Array.isArray(c.days)?c.days[0]:0);
+        return c.hour===hour&&d===di;
+      });
+      cell.className='day-cell'+(di>=5?' weekend':'')+(hasClass?'':' empty-slot');
+      cell.style.display=hideThisRow?'none':'';
+      cell.dataset.day=di; cell.dataset.hour=hour;
+      const hint=document.createElement('div'); hint.className='empty-hint'; hint.textContent='+';
+      hint.onclick=()=>openEdit(null,di,hour,'00');
+      cell.appendChild(hint);
+      cell.onclick=e=>{ if(e.target===cell||e.target===hint)openEdit(null,di,hour,'00'); };
+      grid.appendChild(cell);
+    });
+  });
+  renderAllClasses(); buildLegend();
+}
+
+// ── RENDER ─────────────────────────────────────────────────
+function getDay(cls){ return cls.day!==undefined?cls.day:(Array.isArray(cls.days)?cls.days[0]:0); }
+
+function renderAllClasses(){
+  document.querySelectorAll('.class-pill').forEach(p=>p.remove());
+  // Reset empty-slot and hints for all visible cells
+  document.querySelectorAll('.day-cell').forEach(cell=>{
+    if(cell.style.display==='none')return;
+    cell.classList.add('empty-slot');
+    const hint=cell.querySelector('.empty-hint');
+    if(hint)hint.style.display='';
+  });
+
+  classes.forEach((cls,idx)=>{
+    const d=getDay(cls);
+    if(!visDays.includes(d))return;
+    const cell=document.querySelector(`.day-cell[data-day="${d}"][data-hour="${cls.hour}"]`);
+    if(!cell||cell.style.display==='none')return;
+    cell.classList.remove('empty-slot');
+    const hint=cell.querySelector('.empty-hint');
+    if(hint)hint.style.display='none';
+    cell.appendChild(makePill(cls,idx));
+  });
+  updateClassList();
+  document.getElementById('class-count').textContent=classes.length;
+}
+
+function makeTimeStr(hour,minute,duration){
+  const sm=parseInt(hour)*60+parseInt(minute||0)+parseInt(duration);
+  return `${hour}:${String(minute||'0').padStart(2,'0')}–${Math.floor(sm/60)}:${String(sm%60).padStart(2,'0')}`;
+}
+
+function makePill(cls,idx){
+  const pill=document.createElement('div');
+  pill.className='class-pill';
+  const color=catColor(cls.cat);
+  pill.style.cssText=`background:${color}!important;background-color:${color}!important`;
+  const d=getDay(cls);
+  const timeStr=makeTimeStr(cls.hour,cls.minute||'00',cls.duration);
+  pill.innerHTML=`
+    <div class="pill-name">${cls.name}</div>
+    <div class="pill-meta">${timeStr} · ${cls.duration}min · ${cls.capacity}os.${cls.instructor?'<br>'+cls.instructor:''}</div>
+    ${cls.zone?`<div class="pill-zone">📍 ${cls.zone}</div>`:''}
+    <div class="pill-actions">
+      <button class="pill-btn" title="Edytuj" onclick="openEdit(${idx},null,null,null,event)">✎</button>
+      <button class="pill-btn" style="background:rgba(180,0,0,.4)" title="Usuń" onclick="deleteClass(${idx},event)">×</button>
+    </div>`;
+  pill.onclick=e=>{ if(!e.target.closest('.pill-actions'))openEdit(idx,null,null,null,e); };
+  return pill;
+}
+
+function deleteClass(idx,e){
+  e.stopPropagation();
+  classes.splice(idx,1);
+  renderAllClasses(); buildLegend();
+}
+
+function updateClassList(){
+  const el=document.getElementById('class-list');
+  if(!classes.length){el.innerHTML='<em>Brak zajęć.</em>';return;}
+  el.innerHTML=classes.map((c,i)=>`
+    <div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--gray-line)">
+      <div style="width:10px;height:10px;border-radius:3px;background:${catColor(c.cat)};flex-shrink:0"></div>
+      <div style="flex:1;font-size:11px"><strong style="color:var(--xnavy)">${c.name}</strong><br>
+        <span style="color:var(--gray-mid)">${DAYS_SHORT[getDay(c)]} ${c.hour}:${String(c.minute||'0').padStart(2,'0')}</span></div>
+      <button class="btn btn-sm btn-danger" onclick="deleteClass(${i},event)">×</button>
+    </div>`).join('');
+}
+
+// ── EDIT MODAL ─────────────────────────────────────────────
+function openEdit(idx,day,hour,minute,e){
+  if(e)e.stopPropagation();
+  editIdx=idx;
+
+  if(idx!==null){
+    const cls=classes[idx];
+    document.getElementById('edit-title').textContent='Edytuj zajęcia';
+    document.getElementById('ef-name').value=cls.name;
+    document.getElementById('ef-instructor').value=cls.instructor||'';
+    document.getElementById('ef-zone').value=cls.zone||'';
+    document.getElementById('ef-hour').value=cls.hour;
+    document.getElementById('ef-minute').value=cls.minute||'00';
+    document.getElementById('ef-duration').value=cls.duration;
+    document.getElementById('ef-capacity').value=cls.capacity;
+    editCat=cls.cat;
+    editDays=[getDay(cls)];
+    document.getElementById('edit-delete-btn').style.display='';
+  } else {
+    document.getElementById('edit-title').textContent='Dodaj zajęcia';
+    document.getElementById('ef-name').value='';
+    document.getElementById('ef-instructor').value='';
+    document.getElementById('ef-zone').value='';
+    document.getElementById('ef-hour').value=hour||'18';
+    document.getElementById('ef-minute').value=minute||'00';
+    document.getElementById('ef-duration').value='50';
+    document.getElementById('ef-capacity').value='18';
+    editCat='cardio';
+    editDays=day!==null&&day!==undefined?[day]:[];
+    document.getElementById('edit-delete-btn').style.display='none';
+  }
+
+  document.querySelectorAll('#ef-day-btns .day-btn').forEach(btn=>{
+    btn.classList.toggle('active',editDays.includes(parseInt(btn.dataset.day)));
+  });
+  buildCatGrid('ecat-grid','editCat');
+  document.getElementById('edit-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('ef-name').focus(),100);
+}
+
+function closeEdit(){ document.getElementById('edit-modal').classList.remove('open'); }
+
+function toggleEditDay(el){
+  const d=parseInt(el.dataset.day);
+  if(editDays.includes(d)){editDays=editDays.filter(x=>x!==d);el.classList.remove('active');}
+  else{editDays.push(d);el.classList.add('active');}
+}
+
+function saveEdit(){
+  const name=document.getElementById('ef-name').value.trim();
+  if(!name){alert('Podaj nazwę zajęć.');return;}
+  if(!editDays.length){alert('Wybierz co najmniej jeden dzień.');return;}
+
+  const base={
+    name,
+    instructor:document.getElementById('ef-instructor').value.trim(),
+    zone:document.getElementById('ef-zone').value.trim(),
+    hour:document.getElementById('ef-hour').value,
+    minute:document.getElementById('ef-minute').value,
+    duration:document.getElementById('ef-duration').value,
+    capacity:document.getElementById('ef-capacity').value,
+    cat:editCat,
+  };
+
+  if(editIdx!==null){
+    // Editing existing: update the original entry with the first selected day.
+    // Additional selected days create NEW independent entries.
+    const origDay=getDay(classes[editIdx]);
+    classes[editIdx]={...base, day:editDays[0]};
+    // Extra days become new independent entries
+    editDays.slice(1).forEach(d=>classes.push({...base,day:d}));
+  } else {
+    // New: each selected day becomes its own independent entry
+    editDays.forEach(d=>classes.push({...base,day:d}));
+  }
+
+  closeEdit();
+  renderAllClasses(); buildLegend();
+}
+
+function deleteFromEdit(){
+  if(editIdx===null)return;
+  if(!confirm('Usunąć te zajęcia?'))return;
+  classes.splice(editIdx,1);
+  closeEdit(); renderAllClasses(); buildLegend();
+}
+
+// ── SIDEBAR ADD ────────────────────────────────────────────
+function addClass(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){alert('Podaj nazwę zajęć.');return;}
+  if(!selectedDays.length){alert('Wybierz co najmniej jeden dzień.');return;}
+  const base={
+    name,
+    instructor:document.getElementById('f-instructor').value.trim(),
+    zone:document.getElementById('f-zone').value.trim(),
+    hour:document.getElementById('f-hour').value,
+    minute:document.getElementById('f-minute').value,
+    duration:document.getElementById('f-duration').value,
+    capacity:document.getElementById('f-capacity').value,
+    cat:selectedCat,
+  };
+  // Each day → independent entry
+  selectedDays.forEach(d=>classes.push({...base,day:d}));
+  renderAllClasses(); buildLegend();
+  selectedDays=[];
+  document.querySelectorAll('#day-btns .day-btn').forEach(b=>b.classList.remove('active'));
+}
+
+function toggleDay(el){
+  const d=parseInt(el.dataset.day);
+  if(selectedDays.includes(d)){selectedDays=selectedDays.filter(x=>x!==d);el.classList.remove('active');}
+  else{selectedDays.push(d);el.classList.add('active');}
+}
+
+// ── LEGEND ─────────────────────────────────────────────────
+function buildLegend(){
+  const used=new Set(classes.map(c=>c.cat));
+  const el=document.getElementById('legend'); el.innerHTML='';
+  CATEGORIES.filter(c=>used.has(c.id)).forEach(cat=>{
+    const item=document.createElement('div'); item.className='legend-item';
+    item.innerHTML=`<div class="legend-dot" style="background:${cat.color};-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><span class="legend-label">${cat.label}</span>`;
+    el.appendChild(item);
+  });
+}
+
+// ── IMPORT PDF ─────────────────────────────────────────────
+function openImport(){document.getElementById('import-modal').classList.add('open');}
+function closeImport(){document.getElementById('import-modal').classList.remove('open');}
+function parseImport(){
+  const raw=document.getElementById('import-text').value;
+  const lines=raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  const parsed=[];let i=0;
+  while(i<lines.length){
+    const m=lines[i].match(/^(\d+)\s+min\s+(\d+)\s+miejsc/);
+    if(m&&i+3<lines.length){
+      const duration=m[1],capacity=m[2],name=lines[i+1];
+      const tm=lines[i+2].match(/(\d+):(\d+)/);
+      const hour=tm?tm[1]:null,minute=tm?tm[2]:'00';
+      const instructor=lines[i+3];
+      if(name&&hour)parsed.push({name,instructor,zone:'',hour,minute,duration,capacity,cat:guessCategory(name),day:0});
+      i+=4;
+    }else i++;
+  }
+  const res=document.getElementById('import-result');
+  if(!parsed.length){res.innerHTML='<span style="color:var(--xred)">Nie rozpoznano zajęć.</span>';return;}
+  parsed.forEach(p=>classes.push(p));
+  res.innerHTML=`<strong style="color:var(--xnavy)">Rozpoznano ${parsed.length} zajęć.</strong> Kliknij każde zajęcia i przypisz odpowiedni dzień.`;
+  renderAllClasses(); buildLegend(); closeImport();
+}
+function guessCategory(name){
+  const lc=name.toLowerCase();
+  for(const[cat,names] of Object.entries(CLASS_NAMES)){
+    if(names.some(n=>n.toLowerCase()===lc||lc.includes(n.toLowerCase().slice(0,5))))return cat;
+  }
+  return'other';
+}
+
+// ── EXPORT / IMPORT JSON ────────────────────────────────────
+function exportJSON(){
+  const clubName=document.getElementById('club-input').value;
+  const payload={
+    version:2,
+    club:clubName,
+    savedAt:new Date().toISOString(),
+    classes,
+    extraZones,
+    visDays,
+    hourFrom:parseInt(document.getElementById('set-hour-from').value||6),
+    hourTo:parseInt(document.getElementById('set-hour-to').value||21),
+    hideEmpty:document.getElementById('set-hide-empty').checked,
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  const slug=clubName.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  a.download=`grafik-${slug}-${new Date().toISOString().slice(0,10)}.xfg`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function importJSON(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.classes)throw new Error('Nieprawidłowy format pliku');
+
+      // Migrate old format (days array) to new format (single day per entry)
+      const migrated=[];
+      data.classes.forEach(cls=>{
+        if(cls.day!==undefined){
+          migrated.push(cls);
+        } else if(Array.isArray(cls.days)){
+          cls.days.forEach(d=>migrated.push({...cls,day:d,days:undefined}));
+        } else {
+          migrated.push({...cls,day:0});
+        }
+      });
+
+      classes=migrated;
+      if(data.club){
+        document.getElementById('club-input').value=data.club;
+        document.getElementById('sch-pretitle').textContent=`XTREME FITNESS GYMS · ${data.club.toUpperCase()}`;
+        document.getElementById('ct-label').textContent=data.club.toUpperCase();
+      }
+      if(data.extraZones){extraZones=data.extraZones;renderZoneList();updateDatalist();}
+      if(data.visDays){
+        visDays=data.visDays;
+        document.querySelectorAll('#set-days .day-btn').forEach(btn=>{
+          btn.classList.toggle('active',visDays.includes(parseInt(btn.dataset.day)));
+        });
+      }
+      if(data.hourFrom)document.getElementById('set-hour-from').value=data.hourFrom;
+      if(data.hourTo)document.getElementById('set-hour-to').value=data.hourTo;
+      if(data.hideEmpty!==undefined)document.getElementById('set-hide-empty').checked=data.hideEmpty;
+
+      initGrid();
+      alert(`Wczytano grafik: ${data.club||'bez nazwy'} (${classes.length} zajęć)`);
+    }catch(err){
+      alert('Błąd wczytywania pliku: '+err.message);
+    }
+    event.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+// ── ZONES ──────────────────────────────────────────────────
+function addExtraZone(){
+  const z=document.getElementById('extra-zone').value.trim();
+  if(!z||extraZones.includes(z))return;
+  extraZones.push(z);
+  document.getElementById('extra-zone').value='';
+  renderZoneList();updateDatalist();
+}
+function removeZone(i){extraZones.splice(i,1);renderZoneList();updateDatalist();}
+function renderZoneList(){
+  document.getElementById('zone-list').innerHTML=extraZones.map((z,i)=>`
+    <div style="display:inline-flex;align-items:center;gap:3px;background:var(--gray-bg);border:1px solid var(--gray-line);border-radius:4px;padding:2px 7px;font-size:11px">
+      ${z}<button onclick="removeZone(${i})" style="background:none;border:none;cursor:pointer;color:var(--gray-mid);font-size:12px;padding:0 0 0 3px">×</button>
+    </div>`).join('');
+}
+
+// ── MISC ───────────────────────────────────────────────────
+function toggleSettings(){document.getElementById('settings-panel').classList.toggle('open');}
+function clearAll(){if(classes.length&&!confirm('Usunąć wszystkie zajęcia?'))return;classes=[];renderAllClasses();buildLegend();}
+
+document.getElementById('club-input').addEventListener('input',function(){
+  const v=this.value.toUpperCase();
+  document.getElementById('sch-pretitle').textContent=`XTREME FITNESS GYMS · ${v}`;
+  document.getElementById('ct-label').textContent=v;
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeImport();closeEdit();}
+});
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o){closeImport();closeEdit();}});
+});
+
+// ── SAMPLE DATA ────────────────────────────────────────────
+// One entry per day (independent)
+function loadSample(){
+  classes=[
+    {name:'Zdrowy kręgosłup',instructor:'Piotr Bojanowski',zone:'Strefa Funkcjonalna',hour:'10',minute:'00',duration:'50',capacity:'18',cat:'mind',day:1},
+    {name:'Zdrowy kręgosłup',instructor:'Piotr Bojanowski',zone:'Strefa Funkcjonalna',hour:'10',minute:'00',duration:'50',capacity:'18',cat:'mind',day:3},
+    {name:'X START',instructor:'Maciej Maciszewski',zone:'Sala Fitness',hour:'11',minute:'00',duration:'60',capacity:'6',cat:'xstart',day:2},
+    {name:'Pilates',instructor:'Aleksandra Przanowska',zone:'Strefa Funkcjonalna',hour:'12',minute:'00',duration:'50',capacity:'14',cat:'mind',day:0},
+    {name:'Brzuch+stretch',instructor:'Patrycja Rogowska',zone:'Sala Główna',hour:'17',minute:'00',duration:'50',capacity:'18',cat:'strength',day:0},
+    {name:'Power Cross',instructor:'Piotr Bojanowski',zone:'Sala Główna',hour:'17',minute:'00',duration:'50',capacity:'18',cat:'spec',day:1},
+    {name:'Zumba®',instructor:'Dawid Komorowski',zone:'Studio',hour:'18',minute:'00',duration:'50',capacity:'18',cat:'dance',day:0},
+    {name:'Zumba®',instructor:'Dawid Komorowski',zone:'Studio',hour:'18',minute:'00',duration:'50',capacity:'18',cat:'dance',day:2},
+    {name:'Power Pump',instructor:'Patrycja Rogowska',zone:'Sala Główna',hour:'18',minute:'00',duration:'50',capacity:'14',cat:'strength',day:1},
+    {name:'Stretching',instructor:'Piotr Bojanowski',zone:'Studio',hour:'18',minute:'00',duration:'50',capacity:'15',cat:'mind',day:3},
+    {name:'Strong Nation®',instructor:'Dawid Komorowski',zone:'Sala Główna',hour:'19',minute:'00',duration:'50',capacity:'18',cat:'licensed',day:0},
+    {name:'Strong Nation®',instructor:'Dawid Komorowski',zone:'Sala Główna',hour:'19',minute:'00',duration:'50',capacity:'18',cat:'licensed',day:2},
+    {name:'TBC',instructor:'Patrycja Rogowska',zone:'Sala Główna',hour:'19',minute:'00',duration:'50',capacity:'18',cat:'strength',day:1},
+    {name:'Step Dance',instructor:'Karolina Słojewska',zone:'Studio',hour:'20',minute:'00',duration:'50',capacity:'18',cat:'dance',day:0},
+    {name:'HYROX®',instructor:'Maciej Maciszewski',zone:'HYROX Zone',hour:'10',minute:'00',duration:'60',capacity:'12',cat:'hyrox',day:5},
+  ];
+  renderAllClasses(); buildLegend();
+}
+
+// ── BOOT ───────────────────────────────────────────────────
+populateHourSelects();
+buildCatGrid('cat-grid','selectedCat');
+buildCatGrid('ecat-grid','editCat');
+updateDatalist();
+initGrid();
+loadSample();
+['Strefa Funkcjonalna','Sala Fitness','Strefa Cardio','Strefa HYROX','Strefa 10X'].forEach(z=>extraZones.push(z));
+renderZoneList(); updateDatalist();
+</script>
+</body>
+</html>
