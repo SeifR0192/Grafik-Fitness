@@ -145,7 +145,7 @@ body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-he
       <datalist id="class-names-list"></datalist>
     </div>
     <div class="fr"><label>Instruktor</label><input type="text" id="f-instructor" placeholder="Imię i nazwisko"></div>
-    <div class="fr"><label>Strefa / Sala</label><input type="text" id="f-zone" list="zone-list-dl" placeholder="np. Studio, Sala Główna..."><datalist id="zone-list-dl"></datalist></div>
+    <div class="fr"><label>Strefa / Sala</label><input type="text" id="f-zone" list="zone-list-dl" placeholder="np. Studio, Sala Fitness..."><datalist id="zone-list-dl"></datalist></div>
     <div class="grid3">
       <div class="fr"><label>Godz.</label><select id="f-hour"></select></div>
       <div class="fr"><label>Min.</label><select id="f-minute"><option value="00">:00</option><option value="15">:15</option><option value="30">:30</option><option value="45">:45</option></select></div>
@@ -300,24 +300,18 @@ const CATEGORIES=[
   {id:'express', label:'Express',        color:'#E0A020'},
   {id:'outdoor', label:'Outdoor',        color:'#3A9E5F'},
   {id:'xstart',  label:'X Start',        color:'#052d46'},
-  {id:'hyrox',   label:'HYROX®',         color:'#8B2FC9'},
-  {id:'licensed',label:'Licencjonowane', color:'#146496'},
-  {id:'other',   label:'Inne',           color:'#6B7888'},
 ];
 
 const CLASS_NAMES={
   mind:['Joga','Pilates','Stretching','Zdrowy kręgosłup','Body Art®','Mobility','Flow Body','Vinyasa Joga','Relax Your Body','Power Joga','AcroJoga','Yoga Wheel','Pilates Ball','Yin Joga'],
   dance:['Zumba®','Zumba Gold','Step Dance','Step Basic','Belly Dance','Latino Dance','Salsation®','Dance Aerobic','Terapia tańcem','Bachata','High Heels','Sexy Dance','Twerk','Ritmo do Brazil','Hip Hop','Taniec użytkowy','Taniec nowoczesny'],
-  spec:['Muay Thai','Aeroboks','Aktywna ciąża','Podstawy samoobrony','Boks','Boks Basic','Pole Dance','Pole Dance Basic','MMA','Aktywny senior','Trampoliny','Piloxing®','Krav Maga','Power Cross','Power Cross Basic','TRX®','Jumping Frog®','Aktywna mama','10XTraining','Fight & Kick','Kettlebells','XFIGHT','Deep Work®','Animal Flow®','Strong Women','Kickboxing','Kangoo Jump','Muay Thai dla kobiet','LEVEL UP - Teen Training','Zapasy','Grappling','BJJ - Brazilian Jiu-Jitsu','Aerial Silks','Aerial Hoop'],
+  spec:['Muay Thai','Aeroboks','Aktywna ciąża','Podstawy samoobrony','Boks','Boks Basic','Pole Dance','Pole Dance Basic','MMA','Aktywny senior','Trampoliny','Piloxing®','Krav Maga','Power Cross','Power Cross Basic','TRX®','Jumping Frog®','Aktywna mama','10XTraining','Fight & Kick','Kettlebells','XFIGHT','Deep Work®','Animal Flow®','Strong Women','Kickboxing','Kangoo Jump','Muay Thai dla kobiet','LEVEL UP - Teen Training','Zapasy','Grappling','BJJ - Brazilian Jiu-Jitsu','Aerial Silks','Aerial Hoop','HYROX®'],
   cycling:['Indoor Cycling','Spinning®','Indoor Cycling Basic'],
   cardio:['Cardio Training','Fat Burning','Fat Burning Step','XTREME CARDIO','HIIT STEP®','Cross Cardio®','Biegaj z Xtreme','Bikini Cardio','HIIT'],
   strength:['Turbo pupa','TBC','BPU','Płaski brzuch','Power Pump','Step Shape','Fit Ball','Brzuch+stretch','Kalistenika','Brazylijskie pośladki','Shape','Callanetics','Strong Nation®','Zumba Toning®','XTREME POWER','GT Training STRENGTH®','Functional Floor','Functional Step','Fitness Start','Bikini Shape','Hula Hop','Fit Band','Gimnastyka odchudzająca','Kalistenika Basic','Barre Pulse','Trening obwodowy'],
   express:['Express obwód','Express pośladki','Express brzuch','Express cardio','Express stretch','TABATA'],
   outdoor:['Outdoor'],
-  xstart:['X START'],
-  hyrox:['HYROX®'],
-  licensed:['Body Art®','Zumba®','Salsation®','Piloxing®','TRX®','Jumping Frog®','Deep Work®','Animal Flow®','Spinning®','HIIT STEP®','Cross Cardio®','Strong Nation®','Zumba Toning®','GT Training STRENGTH®'],
-  other:[]
+  xstart:['X START']
 };
 
 // Build name→cat reverse map
@@ -783,17 +777,15 @@ function loadSample(){
     {name:'Zdrowy kręgosłup',instructor:'Piotr Bojanowski',zone:'Strefa Funkcjonalna',hour:'10',minute:'00',duration:'50',capacity:'18',cat:'mind',day:3},
     {name:'X START',instructor:'Maciej Maciszewski',zone:'Sala Fitness',hour:'11',minute:'00',duration:'60',capacity:'6',cat:'xstart',day:2},
     {name:'Pilates',instructor:'Aleksandra Przanowska',zone:'Strefa Funkcjonalna',hour:'12',minute:'00',duration:'50',capacity:'14',cat:'mind',day:0},
-    {name:'Brzuch+stretch',instructor:'Patrycja Rogowska',zone:'Sala Główna',hour:'17',minute:'00',duration:'50',capacity:'18',cat:'strength',day:0},
-    {name:'Power Cross',instructor:'Piotr Bojanowski',zone:'Sala Główna',hour:'17',minute:'00',duration:'50',capacity:'18',cat:'spec',day:1},
+    {name:'Brzuch+stretch',instructor:'Patrycja Rogowska',zone:'Sala Fitness',hour:'17',minute:'00',duration:'50',capacity:'18',cat:'strength',day:0},
+    {name:'Power Cross',instructor:'Piotr Bojanowski',zone:'Sala Fitness',hour:'17',minute:'00',duration:'50',capacity:'18',cat:'spec',day:1},
     {name:'Zumba®',instructor:'Dawid Komorowski',zone:'Studio',hour:'18',minute:'00',duration:'50',capacity:'18',cat:'dance',day:0},
     {name:'Zumba®',instructor:'Dawid Komorowski',zone:'Studio',hour:'18',minute:'00',duration:'50',capacity:'18',cat:'dance',day:2},
-    {name:'Power Pump',instructor:'Patrycja Rogowska',zone:'Sala Główna',hour:'18',minute:'00',duration:'50',capacity:'14',cat:'strength',day:1},
+    {name:'Power Pump',instructor:'Patrycja Rogowska',zone:'Sala Fitness',hour:'18',minute:'00',duration:'50',capacity:'14',cat:'strength',day:1},
     {name:'Stretching',instructor:'Piotr Bojanowski',zone:'Studio',hour:'18',minute:'00',duration:'50',capacity:'15',cat:'mind',day:3},
-    {name:'Strong Nation®',instructor:'Dawid Komorowski',zone:'Sala Główna',hour:'19',minute:'00',duration:'50',capacity:'18',cat:'licensed',day:0},
-    {name:'Strong Nation®',instructor:'Dawid Komorowski',zone:'Sala Główna',hour:'19',minute:'00',duration:'50',capacity:'18',cat:'licensed',day:2},
-    {name:'TBC',instructor:'Patrycja Rogowska',zone:'Sala Główna',hour:'19',minute:'00',duration:'50',capacity:'18',cat:'strength',day:1},
+    {name:'TBC',instructor:'Patrycja Rogowska',zone:'Sala Fitness',hour:'19',minute:'00',duration:'50',capacity:'18',cat:'strength',day:1},
     {name:'Step Dance',instructor:'Karolina Słojewska',zone:'Studio',hour:'20',minute:'00',duration:'50',capacity:'18',cat:'dance',day:0},
-    {name:'HYROX®',instructor:'Maciej Maciszewski',zone:'HYROX Zone',hour:'10',minute:'00',duration:'60',capacity:'12',cat:'hyrox',day:5},
+    {name:'HYROX®',instructor:'Maciej Maciszewski',zone:'Strefa HYROX',hour:'10',minute:'00',duration:'60',capacity:'12',cat:'spec',day:5},
   ];
   renderAllClasses(); buildLegend();
 }
