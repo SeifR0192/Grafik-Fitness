@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XFG — Builder Grafiku Zajęć</title>
+<title>Generator grafiku zajęć</title>
 <link href="https://fonts.googleapis.com/css2?family=HK+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -193,7 +193,6 @@ body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-he
 </div>
 </div>
 
-<!-- SETTINGS -->
 <div id="settings-panel">
   <button id="panel-close" onclick="toggleSettings()">✕</button>
   <h3>⚙ Ustawienia</h3>
@@ -314,25 +313,18 @@ const CLASS_NAMES={
   xstart:['X START']
 };
 
-// Build name→cat reverse map
 const NAME_TO_CAT={};
 (()=>{ for(const[cat,names] of Object.entries(CLASS_NAMES)) names.forEach(n=>{ if(!NAME_TO_CAT[n.toLowerCase()]) NAME_TO_CAT[n.toLowerCase()]=cat; }); })();
 
-// ── DATA MODEL ─────────────────────────────────────────────
-// IMPORTANT: each entry has exactly ONE day (integer 0-6), not an array.
-// This makes every entry fully independent — edit/delete affects only that entry.
-// "days" key is kept as [day] for backwards compat with any loaded files.
-
-let classes=[];      // [{name,instructor,zone,hour,minute,duration,capacity,cat,day}]
+let classes=[];
 let extraZones=[];
 let selectedDays=[];
 let selectedCat='cardio';
 let editCat='cardio';
 let editIdx=null;
-let editDays=[];     // used only in edit modal (multi-day = creates multiple entries on save)
+let editDays=[];
 let visDays=[0,1,2,3,4,5,6];
 
-// ── HELPERS ────────────────────────────────────────────────
 function catColor(id){ return (CATEGORIES.find(c=>c.id===id)||CATEGORIES.find(c=>c.id==='other')).color; }
 
 function autoCategory(prefix){
@@ -381,7 +373,6 @@ function updateDatalist(){
   extraZones.forEach(z=>{ const o=document.createElement('option'); o.value=z; zdl.appendChild(o); });
 }
 
-// ── GRID ───────────────────────────────────────────────────
 function getVisHours(){
   const f=parseInt(document.getElementById('set-hour-from')?.value||6);
   const t=parseInt(document.getElementById('set-hour-to')?.value||21);
@@ -402,7 +393,6 @@ function initGrid(){
 
   const hideEmpty=document.getElementById('set-hide-empty')?.checked;
 
-  // Day headers
   const thT=document.createElement('div'); thT.className='day-hdr time-col'; thT.textContent='godz.'; grid.appendChild(thT);
   visDays.forEach(di=>{ const th=document.createElement('div'); th.className='day-hdr'+(di>=5?' weekend':''); th.textContent=DAYS[di]; grid.appendChild(th); });
 
@@ -438,12 +428,10 @@ function initGrid(){
   renderAllClasses(); buildLegend();
 }
 
-// ── RENDER ─────────────────────────────────────────────────
 function getDay(cls){ return cls.day!==undefined?cls.day:(Array.isArray(cls.days)?cls.days[0]:0); }
 
 function renderAllClasses(){
   document.querySelectorAll('.class-pill').forEach(p=>p.remove());
-  // Reset empty-slot and hints for all visible cells
   document.querySelectorAll('.day-cell').forEach(cell=>{
     if(cell.style.display==='none')return;
     cell.classList.add('empty-slot');
@@ -507,7 +495,6 @@ function updateClassList(){
     </div>`).join('');
 }
 
-// ── EDIT MODAL ─────────────────────────────────────────────
 function openEdit(idx,day,hour,minute,e){
   if(e)e.stopPropagation();
   editIdx=idx;
@@ -572,14 +559,10 @@ function saveEdit(){
   };
 
   if(editIdx!==null){
-    // Editing existing: update the original entry with the first selected day.
-    // Additional selected days create NEW independent entries.
     const origDay=getDay(classes[editIdx]);
     classes[editIdx]={...base, day:editDays[0]};
-    // Extra days become new independent entries
     editDays.slice(1).forEach(d=>classes.push({...base,day:d}));
   } else {
-    // New: each selected day becomes its own independent entry
     editDays.forEach(d=>classes.push({...base,day:d}));
   }
 
@@ -594,7 +577,6 @@ function deleteFromEdit(){
   closeEdit(); renderAllClasses(); buildLegend();
 }
 
-// ── SIDEBAR ADD ────────────────────────────────────────────
 function addClass(){
   const name=document.getElementById('f-name').value.trim();
   if(!name){alert('Podaj nazwę zajęć.');return;}
@@ -609,7 +591,6 @@ function addClass(){
     capacity:document.getElementById('f-capacity').value,
     cat:selectedCat,
   };
-  // Each day → independent entry
   selectedDays.forEach(d=>classes.push({...base,day:d}));
   renderAllClasses(); buildLegend();
   selectedDays=[];
@@ -622,7 +603,6 @@ function toggleDay(el){
   else{selectedDays.push(d);el.classList.add('active');}
 }
 
-// ── LEGEND ─────────────────────────────────────────────────
 function buildLegend(){
   const used=new Set(classes.map(c=>c.cat));
   const el=document.getElementById('legend'); el.innerHTML='';
@@ -633,7 +613,6 @@ function buildLegend(){
   });
 }
 
-// ── IMPORT PDF ─────────────────────────────────────────────
 function openImport(){document.getElementById('import-modal').classList.add('open');}
 function closeImport(){document.getElementById('import-modal').classList.remove('open');}
 function parseImport(){
@@ -665,7 +644,6 @@ function guessCategory(name){
   return'other';
 }
 
-// ── EXPORT / IMPORT JSON ────────────────────────────────────
 function exportJSON(){
   const clubName=document.getElementById('club-input').value;
   const payload={
@@ -697,7 +675,6 @@ function importJSON(event){
       const data=JSON.parse(e.target.result);
       if(!data.classes)throw new Error('Nieprawidłowy format pliku');
 
-      // Migrate old format (days array) to new format (single day per entry)
       const migrated=[];
       data.classes.forEach(cls=>{
         if(cls.day!==undefined){
@@ -736,7 +713,6 @@ function importJSON(event){
   reader.readAsText(file);
 }
 
-// ── ZONES ──────────────────────────────────────────────────
 function addExtraZone(){
   const z=document.getElementById('extra-zone').value.trim();
   if(!z||extraZones.includes(z))return;
@@ -752,7 +728,6 @@ function renderZoneList(){
     </div>`).join('');
 }
 
-// ── MISC ───────────────────────────────────────────────────
 function toggleSettings(){document.getElementById('settings-panel').classList.toggle('open');}
 function clearAll(){if(classes.length&&!confirm('Usunąć wszystkie zajęcia?'))return;classes=[];renderAllClasses();buildLegend();}
 
@@ -769,8 +744,6 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click',e=>{if(e.target===o){closeImport();closeEdit();}});
 });
 
-// ── SAMPLE DATA ────────────────────────────────────────────
-// One entry per day (independent)
 function loadSample(){
   classes=[
     {name:'Zdrowy kręgosłup',instructor:'Piotr Bojanowski',zone:'Strefa Funkcjonalna',hour:'10',minute:'00',duration:'50',capacity:'18',cat:'mind',day:1},
@@ -790,7 +763,6 @@ function loadSample(){
   renderAllClasses(); buildLegend();
 }
 
-// ── BOOT ───────────────────────────────────────────────────
 populateHourSelects();
 buildCatGrid('cat-grid','selectedCat');
 buildCatGrid('ecat-grid','editCat');
