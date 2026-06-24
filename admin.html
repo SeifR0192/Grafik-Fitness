@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XFG — Panel Admina</title>
+<link href="https://fonts.googleapis.com/css2?family=HK+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --xred:#c80000;--xblue:#146496;--xnavy:#052d46;
+  --white:#fff;--gray-bg:#F2F4F6;--gray-line:#DDE1E7;
+  --gray-mid:#8A93A0;--gray-dark:#3D4550;
+  --font:'HK Grotesk',sans-serif;
+}
+body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-height:100vh;display:flex;flex-direction:column}
+
+/* ── LOGIN SCREEN ──────────────────────────────────────────── */
+#login-screen{
+  position:fixed;inset:0;background:var(--xnavy);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;
+}
+.login-box{
+  background:white;border-radius:12px;padding:40px 36px;
+  width:380px;box-shadow:0 24px 64px rgba(0,0,0,.4);
+}
+.login-logo{display:flex;align-items:center;gap:6px;margin-bottom:28px;justify-content:center}
+.login-logo-x{color:var(--xred);font-size:32px;font-weight:800;font-family:var(--font)}
+.login-logo-text{font-weight:800;font-size:22px;color:var(--xnavy);font-family:var(--font)}
+.login-logo-text span{color:var(--xblue)}
+.login-title{font-weight:800;font-size:17px;color:var(--xnavy);margin-bottom:4px;text-align:center}
+.login-sub{font-size:12px;color:var(--gray-mid);text-align:center;margin-bottom:24px;line-height:1.5}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:10px;font-weight:700;color:var(--gray-mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.login-field input{
+  width:100%;padding:10px 12px;border:1.5px solid var(--gray-line);
+  border-radius:6px;font-family:var(--font);font-size:14px;
+  color:var(--xnavy);outline:none;transition:border .15s;background:var(--gray-bg);
+}
+.login-field input:focus{border-color:var(--xblue);background:white}
+.login-btn{
+  width:100%;padding:11px;background:var(--xred);color:white;
+  border:none;border-radius:6px;font-family:var(--font);font-weight:800;
+  font-size:15px;cursor:pointer;transition:background .15s;margin-top:4px;
+}
+.login-btn:hover{background:#a80000}
+.login-error{
+  display:none;background:#FEE2E2;color:var(--xred);border:1px solid #FECACA;
+  border-radius:6px;padding:8px 12px;font-size:12px;font-weight:600;
+  text-align:center;margin-top:12px;
+}
+.login-error.show{display:block}
+.login-attempts{font-size:11px;color:var(--gray-mid);text-align:center;margin-top:10px}
+
+/* ── APP (hidden until auth) ───────────────────────────────── */
+#app{display:none;flex-direction:column;flex:1}
+#app.authed{display:flex}
+
+#topbar{background:var(--xnavy);height:58px;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;box-shadow:0 2px 16px rgba(0,0,0,.35)}
+.logo{font-weight:800;font-size:19px;color:var(--white);display:flex;align-items:center;gap:5px}
+.logo-x{color:var(--xred);font-size:23px}
+.logo span{color:var(--xblue)}
+.admin-badge{background:var(--xred);color:white;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.5px}
+.sep{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:5px;border:none;font-family:var(--font);font-weight:700;font-size:13px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-red{background:var(--xred);color:white}.btn-red:hover{background:#a80000}
+.btn-green{background:#166534;color:white}.btn-green:hover{background:#14532d}
+.btn-ghost{background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.22)}.btn-ghost:hover{border-color:var(--xblue);color:#7cc4e8}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-danger{background:#b91c1c;color:white}.btn-danger:hover{background:#991818}
+
+#main{display:flex;flex:1;overflow:hidden;height:calc(100vh - 58px)}
+
+/* SIDEBAR */
+#admin-sidebar{width:290px;background:white;border-right:1px solid var(--gray-line);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.sb-section{padding:14px;border-bottom:1px solid var(--gray-line)}
+.sb-title{font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-mid);margin-bottom:10px}
+.fr{margin-bottom:8px}
+.fr label{display:block;font-size:10px;font-weight:700;color:var(--gray-mid);margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
+.fr input,.fr select{width:100%;padding:6px 9px;border:1px solid var(--gray-line);border-radius:5px;font-family:var(--font);font-size:12.5px;color:var(--xnavy);outline:none;transition:border .15s;background:var(--gray-bg)}
+.fr input:focus,.fr select:focus{border-color:var(--xblue);background:white}
+.bullet-list{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.bullet-row{display:flex;gap:4px;align-items:flex-start}
+.bullet-row input{flex:1;padding:5px 8px;font-size:12px;border:1px solid var(--gray-line);border-radius:5px;font-family:var(--font);color:var(--xnavy);outline:none;background:var(--gray-bg)}
+.bullet-row input:focus{border-color:var(--xblue);background:white}
+.bullet-row button{background:none;border:1px solid var(--gray-line);border-radius:4px;cursor:pointer;color:var(--gray-mid);padding:4px 7px;font-size:11px;flex-shrink:0;transition:all .15s;line-height:1}
+.bullet-row button:hover{border-color:var(--xred);color:var(--xred)}
+.add-bullet-btn{width:100%;padding:5px;border-radius:4px;background:var(--gray-bg);border:1px solid var(--gray-line);font-size:11px;font-weight:600;cursor:pointer;color:var(--gray-mid);font-family:var(--font);margin-top:5px;transition:all .15s}
+.add-bullet-btn:hover{border-color:var(--xblue);color:var(--xblue)}
+.form-actions{display:flex;gap:6px;margin-top:6px}
+
+/* CANVAS */
+#admin-canvas{flex:1;overflow-y:auto;padding:24px;background:var(--gray-bg)}
+.canvas-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.canvas-header h2{font-weight:800;font-size:16px;color:var(--xnavy)}
+.total-badge{background:var(--xnavy);color:white;font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px}
+
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:12px}
+.admin-card{background:white;border-radius:8px;border:1.5px solid var(--gray-line);overflow:hidden;transition:box-shadow .15s,border-color .15s}
+.admin-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.admin-card.editing{border-color:var(--xblue);box-shadow:0 0 0 3px rgba(20,100,150,.15)}
+.card-strip{height:4px}
+.card-body{padding:12px}
+.card-cat{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.card-name{font-weight:800;font-size:14px;color:var(--xnavy);margin-bottom:6px}
+.card-bullets{list-style:none;padding:0;display:flex;flex-direction:column;gap:3px}
+.card-bullets li{font-size:11px;color:var(--gray-dark);display:flex;gap:5px;line-height:1.35}
+.card-bullets li::before{content:'—';color:var(--gray-mid);flex-shrink:0}
+.card-actions{display:flex;gap:6px;padding:8px 12px;border-top:1px solid var(--gray-line);background:var(--gray-bg)}
+
+.empty-state{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;color:var(--gray-mid);text-align:center;gap:8px;font-size:13px;line-height:1.6}
+
+/* filter select */
+.filter-select{padding:6px 10px;border:1px solid var(--gray-line);border-radius:5px;font-family:var(--font);font-size:12px;color:var(--xnavy);background:white;outline:none;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ LOGIN SCREEN ══════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="login-logo-x">X</span>
+      <span class="login-logo-text"><span>treme</span> Fitness Gyms</span>
+    </div>
+    <div class="login-title">Panel Administratora</div>
+    <div class="login-sub">Dostęp tylko dla upoważnionych pracowników.<br>Wprowadź dane logowania, aby kontynuować.</div>
+
+    <div class="login-field">
+      <label>Login</label>
+      <input type="text" id="inp-login" autocomplete="username" placeholder="Login" onkeydown="if(event.key==='Enter')tryLogin()">
+    </div>
+    <div class="login-field">
+      <label>Hasło</label>
+      <input type="password" id="inp-pass" autocomplete="current-password" placeholder="Hasło" onkeydown="if(event.key==='Enter')tryLogin()">
+    </div>
+
+    <button class="login-btn" onclick="tryLogin()">Zaloguj się</button>
+    <div class="login-error" id="login-error">Nieprawidłowy login lub hasło. Spróbuj ponownie.</div>
+    <div class="login-attempts" id="login-attempts"></div>
+  </div>
+</div>
+
+<!-- ══════════════ APP ════════════════════════════════════════ -->
+<div id="app">
+  <div id="topbar">
+    <div class="logo"><span class="logo-x">X</span><span>treme</span><span style="opacity:.4;font-weight:300;font-size:14px;margin:0 4px">|</span>Panel Admina</div>
+    <span class="admin-badge">ADMIN</span>
+    <div class="sep"></div>
+    <button class="btn btn-green" onclick="exportDB()" title="Eksportuj bazę opisów do pliku .xfg">💾 Eksportuj bazę</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('load-db').click()" title="Wczytaj wcześniej zapisaną bazę">📂 Wczytaj bazę</button>
+    <input type="file" id="load-db" accept=".xfg,.json" style="display:none" onchange="importDB(event)">
+    <button class="btn btn-ghost btn-sm" onclick="logout()" style="color:#fca5a5;border-color:rgba(252,165,165,.3)">Wyloguj</button>
+  </div>
+
+  <div id="main">
+    <div id="admin-sidebar">
+      <div class="sb-section">
+        <div class="sb-title" id="form-label">➕ Nowe zajęcia</div>
+        <div class="fr">
+          <label>Nazwa zajęć</label>
+          <input type="text" id="f-name" placeholder="np. Zumba®">
+        </div>
+        <div class="fr">
+          <label>Kategoria</label>
+          <select id="f-cat">
+            <option value="mind">Body & Mind</option>
+            <option value="dance">Taneczne</option>
+            <option value="spec">Specjalistyczne</option>
+            <option value="cycling">Rowerowe</option>
+            <option value="cardio">Cardio</option>
+            <option value="strength">Wzmacniające</option>
+            <option value="express">Express</option>
+            <option value="outdoor">Outdoor</option>
+            <option value="xstart">X Start</option>
+            <option value="hyrox">HYROX®</option>
+            <option value="licensed">Licencjonowane</option>
+            <option value="other">Inne</option>
+          </select>
+        </div>
+        <div class="fr">
+          <label>Punkty opisu</label>
+          <div class="bullet-list" id="bullet-list">
+            <div class="bullet-row">
+              <input type="text" placeholder="Punkt 1...">
+              <button onclick="removeBullet(this)">✕</button>
+            </div>
+          </div>
+          <button class="add-bullet-btn" onclick="addBullet()">+ Dodaj punkt</button>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-red" style="flex:1;justify-content:center" onclick="saveEntry()" id="save-btn">Zapisz</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--xnavy);border-color:var(--gray-line);display:none" id="cancel-btn" onclick="cancelEdit()">Anuluj</button>
+        </div>
+      </div>
+      <div class="sb-section" style="padding:10px 14px">
+        <span style="font-size:11px;color:var(--gray-mid)">Łącznie w bazie: <strong id="total-count">0</strong> zajęć</span>
+      </div>
+    </div>
+
+    <div id="admin-canvas">
+      <div class="canvas-header">
+        <h2>Baza opisów zajęć</h2>
+        <span class="total-badge" id="total-badge2">0</span>
+        <div class="sep"></div>
+        <select class="filter-select" id="cat-filter" onchange="renderGrid()">
+          <option value="">Wszystkie kategorie</option>
+          <option value="mind">Body & Mind</option>
+          <option value="dance">Taneczne</option>
+          <option value="spec">Specjalistyczne</option>
+          <option value="cycling">Rowerowe</option>
+          <option value="cardio">Cardio</option>
+          <option value="strength">Wzmacniające</option>
+          <option value="express">Express</option>
+          <option value="outdoor">Outdoor</option>
+          <option value="xstart">X Start</option>
+          <option value="hyrox">HYROX®</option>
+          <option value="licensed">Licencjonowane</option>
+          <option value="other">Inne</option>
+        </select>
+      </div>
+      <div class="admin-grid" id="admin-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── AUTH CONFIG ─────────────────────────────────────────────
+// SHA-256 hashes — DO NOT store plain text credentials here
+// To change: compute new SHA-256 hashes and replace the values below
+// Login hash: "admin" → sha256
+// Pass hash:  "FitnessXtreme2026" → sha256
+const CRED_HASH={
+  login:'8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+  pass: '25a5892b9fb72805331f241a34d186eb985856b2f44d185eb603bfa4aa7eabe7'
+};
+
+let failCount=0;
+let locked=false;
+
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function tryLogin(){
+  if(locked)return;
+  const login=document.getElementById('inp-login').value;
+  const pass=document.getElementById('inp-pass').value;
+  if(!login||!pass)return;
+
+  const [lh,ph]=await Promise.all([sha256(login),sha256(pass)]);
+  const ok=(lh===CRED_HASH.login&&ph===CRED_HASH.pass);
+
+  if(ok){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').classList.add('authed');
+    renderGrid();
+  } else {
+    failCount++;
+    document.getElementById('login-error').classList.add('show');
+    document.getElementById('inp-pass').value='';
+    if(failCount>=5){
+      locked=true;
+      document.getElementById('login-btn-text').textContent='Zablokowano';
+      document.querySelector('.login-btn').disabled=true;
+      document.getElementById('login-attempts').textContent='Zbyt wiele prób. Odśwież stronę.';
+    } else {
+      document.getElementById('login-attempts').textContent=`Próba ${failCount} z 5`;
+    }
+  }
+}
+
+function logout(){
+  if(!confirm('Wylogować się?'))return;
+  location.reload();
+}
+
+// ─── CATEGORIES ──────────────────────────────────────────────
+const CATS={
+  mind:    {label:'Body & Mind',    color:'#5B8DD9'},
+  dance:   {label:'Taneczne',       color:'#D4559A'},
+  spec:    {label:'Specjalistyczne',color:'#D4701F'},
+  cycling: {label:'Rowerowe',       color:'#2AA68C'},
+  cardio:  {label:'Cardio',         color:'#C8292B'},
+  strength:{label:'Wzmacniające',   color:'#4C6EAA'},
+  express: {label:'Express',        color:'#E0A020'},
+  outdoor: {label:'Outdoor',        color:'#3A9E5F'},
+  xstart:  {label:'X Start',        color:'#052d46'},
+  hyrox:   {label:'HYROX®',         color:'#8B2FC9'},
+  licensed:{label:'Licencjonowane', color:'#146496'},
+  other:   {label:'Inne',           color:'#6B7888'},
+};
+function catColor(cat){return(CATS[cat]||CATS.other).color}
+function catLabel(cat){return(CATS[cat]||CATS.other).label}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
+
+// ─── DATA ────────────────────────────────────────────────────
+let entries=[
+  {id:'turbo-pupa',name:'Turbo Pupa',cat:'strength',bullets:['Trening ukierunkowany na wzmocnienie i ujędrnienie dolnych partii ciała, realizowany w strefie maszyn oraz w formie obwodów treningowych','Zajęcia pomagają wyrzeźbić nogi i pośladki, poprawiając siłę oraz wygląd sylwetki']},
+  {id:'bpu',name:'BPU',cat:'strength',bullets:['Trening funkcjonalny ukierunkowany na dolne partie ciała oraz mięśnie brzucha','Ćwiczenia wykonywane są w formie klasycznej lub interwałowej, poprawiając jędrność i wytrzymałość mięśniową','Zajęcia wspierają modelowanie sylwetki i redukcję tkanki tłuszczowej']},
+  {id:'gt-training',name:'GT Training Strength®',cat:'strength',bullets:['Trening siłowy skoncentrowany na budowaniu mocy i wytrzymałości mięśniowej','Zajęcia wykorzystują wolne ciężary oraz ćwiczenia funkcjonalne','Program ukierunkowany na rozwój siły całego ciała']},
+  {id:'gimnastyka',name:'Gimnastyka odchudzająca',cat:'strength',bullets:['Trening o umiarkowanej intensywności, łączący ćwiczenia cardio i wzmacniające','Zajęcia wspierają redukcję tkanki tłuszczowej oraz poprawę ogólnej sprawności','Forma ruchu odpowiednia dla osób rozpoczynających aktywność']},
+  {id:'cardio-training',name:'Cardio Training',cat:'cardio',bullets:['Intensywny trening wytrzymałościowy oparty na prostych, dynamicznych ruchach','Zajęcia rozwijają szybkość, skoczność i wydolność organizmu','Skuteczna forma spalania kalorii i poprawy kondycji']},
+  {id:'hiit-step',name:'HIIT STEP®',cat:'cardio',bullets:['Interwałowy trening o wysokiej intensywności z wykorzystaniem stepu','Dynamiczne sekwencje poprawiają wydolność organizmu i skutecznie przyspieszają spalanie kalorii','Intensywna forma pracy nad kondycją i siłą nóg']},
+  {id:'jiu-jitsu',name:'Jiu-Jitsu',cat:'spec',bullets:['Zajęcia sztuk walki koncentrujące się na technikach chwytów, dźwigni, duszeń oraz skutecznej samoobronie bez użycia bezpośrednich ciosów','Trening rozwija siłę, koordynację ruchową, wydolność oraz uczy kontroli przeciwnika','Doskonała forma aktywności dla osób chcących poprawić sprawność fizyczną i zdobyć praktyczne umiejętności samoobrony']},
+  {id:'aerial-silks',name:'Aerial Silks',cat:'spec',bullets:['Akrobatyczne zajęcia wykonywane na specjalnych materiałach zawieszonych pod sufitem','Trening rozwija koordynację, elastyczność oraz wzmacnia mięśnie całego ciała','Uczestnicy uczą się podstawowych figur i przejść w powietrzu pod okiem instruktora']},
+  {id:'aktywny-senior',name:'Aktywny Senior',cat:'spec',bullets:['Prozdrowotne zajęcia dla osób starszych oraz po urazach','Trening poprawia sprawność, równowagę i wydolność organizmu','Bezpieczna forma aktywności w spokojnym tempie']},
+  {id:'trx',name:'TRX®',cat:'spec',bullets:['Trening w podwieszeniu z wykorzystaniem taśm','Ćwiczenia angażują mięśnie głębokie i poprawiają stabilizację','Skuteczny sposób na wzmocnienie i wyrzeźbienie sylwetki']},
+  {id:'samoobrona',name:'Podstawy samoobrony',cat:'spec',bullets:['Zajęcia uczące praktycznych technik obronnych i reakcji w sytuacjach zagrożenia','Trening buduje pewność siebie oraz poprawia sprawność fizyczną','Odpowiedni dla kobiet i mężczyzn']},
+  {id:'taniec-nowoczesny',name:'Taniec nowoczesny',cat:'dance',bullets:['Zajęcia taneczne łączące elementy tańca klasycznego, jazzowego i współczesnego','Uczestnicy pracują nad koordynacją, izolacjami ciała, precyzją wykonywania figur oraz ekspresją taneczną','Doskonała forma aktywności dla osób chcących rozwijać technikę tańca i sprawność ruchową']},
+  {id:'zumba',name:'Zumba®',cat:'dance',bullets:['Taneczny trening fitness w rytmach latynoskich','Krótkie, powtarzalne choreografie poprawiają kondycję i wspierają spalanie kalorii','Zajęcia łączą aktywność fizyczną z dobrą zabawą']},
+  {id:'step-basic',name:'Step Basic',cat:'dance',bullets:['Podstawowe zajęcia choreograficzne z wykorzystaniem platformy step','Proste układy pozwalają rozpocząć przygodę ze stepem w bezpiecznej i przystępnej formie','Trening wzmacnia nogi i poprawia wydolność']},
+  {id:'hip-hop',name:'Hip Hop',cat:'dance',bullets:['Zajęcia oparte na nowoczesnych choreografiach w stylu hip hop','Dynamiczne kombinacje ruchów poprawiają kondycję, rytmikę i kontrolę ciała','Trening rozwijający pewność siebie oraz wyczucie muzyki']},
+  {id:'yin-joga',name:'Yin Joga',cat:'mind',bullets:['Spokojne i regenerujące zajęcia oparte na dłuższym pozostawaniu w pozycjach oraz świadomym rozluźnianiu ciała','Trening pomaga zmniejszyć napięcia, poprawić elastyczność i wyciszyć układ nerwowy']},
+  {id:'stretching',name:'Stretching',cat:'mind',bullets:['Spokojne zajęcia skupione na rozciąganiu i regeneracji mięśni','Pomagają zwiększyć zakres ruchu w stawach oraz zmniejszyć napięcie powstałe po treningu','Doskonałe uzupełnienie każdej aktywności fizycznej']},
+  {id:'body-art',name:'Body Art®',cat:'mind',bullets:['Licencjonowany koncept łączący elementy jogi, oddechu i płynnego ruchu','Trening wzmacnia ciało, poprawia koordynację oraz świadomość ruchu','Zajęcia budują harmonię między ciałem a umysłem']},
+  {id:'power-joga',name:'Power Joga',cat:'mind',bullets:['Dynamiczna odmiana jogi łącząca płynne przejścia między asanami z elementami wzmacniania','Zajęcia rozwijają siłę, mobilność i stabilizację całego ciała','Intensywniejsza forma pracy nad sylwetką i koncentracją']},
+  {id:'mobility',name:'Mobility',cat:'mind',bullets:['Zajęcia poprawiające ruchomość stawów, elastyczność mięśni oraz jakość ruchu całego ciała','Trening pomaga redukować napięcia i zwiększać zakresy ruchu','Idealna forma zajęć dla osób chcących poruszać się swobodniej i sprawniej']},
+  {id:'indoor-cycling',name:'Indoor Cycling',cat:'cycling',bullets:['Intensywny trening wytrzymałościowy na rowerach stacjonarnych prowadzony w rytm muzyki','Zajęcia poprawiają kondycję, wzmacniają dolne partie ciała i wspierają spalanie tkanki tłuszczowej','Intensywność regulowana jest indywidualnie przez uczestników']},
+  {id:'express-obwod',name:'Express Obwód',cat:'express',bullets:['Dynamiczny trening wytrzymałościowy w skróconej formule','Intensywne bloki ćwiczeń pozwalają szybko podnieść tętno i spalić kalorie','Maksimum efektu w minimalnym czasie']},
+  {id:'express-posladki',name:'Express Pośladki',cat:'express',bullets:['Krótki, skoncentrowany trening modelujący i wzmacniający mięśnie pośladkowe','Zajęcia łączą ćwiczenia siłowe i izometryczne, poprawiając jędrność oraz stabilizację bioder','Intensywna forma pracy nad dolnymi partiami ciała']},
+  {id:'express-brzuch',name:'Express Brzuch',cat:'express',bullets:['Krótki trening skupiony wyłącznie na mięśniach brzucha i core','Intensywna praca w krótkiej formie czasowej','Doskonałe uzupełnienie innych zajęć']},
+  {id:'express-cardio',name:'Express Cardio',cat:'express',bullets:['Krótki, dynamiczny trening wytrzymałościowy oparty na ćwiczeniach podnoszących tętno','Zajęcia poprawiają kondycję i wspierają spalanie tkanki tłuszczowej w skróconej formule','Idealne dla osób, które chcą szybko i efektywnie wykorzystać czas treningu']},
+  {id:'express-stretch',name:'Express Stretch',cat:'express',bullets:['Skrócona forma zajęć rozciągających skoncentrowana na najważniejszych grupach mięśniowych','Trening poprawia mobilność, zmniejsza napięcie i wspiera regenerację organizmu','Doskonałe uzupełnienie treningu siłowego i cardio']},
+  {id:'xstart',name:'X START',cat:'xstart',bullets:['Zajęcia przeznaczone głównie dla osób początkujących lub wracających do aktywności po dłuższej przerwie','Pomagają w budowaniu pewności siebie, poprawie koordynacji oraz stopniowym zwiększaniu sprawności fizycznej','Cały proces trwa 4 tygodnie — Cardio, Funkcjonalna, Maszyny, ABS & Stretching']},
+];
+
+let editId=null;
+
+// ─── FORM ────────────────────────────────────────────────────
+function addBullet(val=''){
+  const row=document.createElement('div');
+  row.className='bullet-row';
+  row.innerHTML=`<input type="text" placeholder="Punkt opisu..." value="${val.replace(/"/g,'&quot;')}"><button onclick="removeBullet(this)">✕</button>`;
+  document.getElementById('bullet-list').appendChild(row);
+}
+function removeBullet(btn){
+  const list=document.getElementById('bullet-list');
+  if(list.children.length>1)btn.parentElement.remove();
+  else btn.parentElement.querySelector('input').value='';
+}
+function getBullets(){
+  return [...document.querySelectorAll('#bullet-list .bullet-row input')].map(i=>i.value.trim()).filter(Boolean);
+}
+function resetForm(){
+  document.getElementById('f-name').value='';
+  document.getElementById('f-cat').value='mind';
+  document.getElementById('bullet-list').innerHTML='<div class="bullet-row"><input type="text" placeholder="Punkt 1..."><button onclick="removeBullet(this)">✕</button></div>';
+}
+function cancelEdit(){
+  editId=null;
+  resetForm();
+  document.getElementById('form-label').textContent='➕ Nowe zajęcia';
+  document.getElementById('save-btn').textContent='Zapisz';
+  document.getElementById('cancel-btn').style.display='none';
+  document.querySelectorAll('.admin-card').forEach(c=>c.classList.remove('editing'));
+}
+function saveEntry(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){alert('Podaj nazwę zajęć.');return;}
+  const bullets=getBullets();
+  if(!bullets.length){alert('Dodaj co najmniej jeden punkt opisu.');return;}
+  const cat=document.getElementById('f-cat').value;
+  if(editId){
+    const idx=entries.findIndex(e=>e.id===editId);
+    if(idx>-1)entries[idx]={id:editId,name,cat,bullets};
+    editId=null;
+    document.getElementById('form-label').textContent='➕ Nowe zajęcia';
+    document.getElementById('save-btn').textContent='Zapisz';
+    document.getElementById('cancel-btn').style.display='none';
+  } else {
+    entries.push({id:uid(),name,cat,bullets});
+  }
+  resetForm();renderGrid();
+}
+
+// ─── GRID ─────────────────────────────────────────────────────
+function renderGrid(){
+  const catF=document.getElementById('cat-filter').value;
+  const filtered=catF?entries.filter(e=>e.cat===catF):entries;
+  document.getElementById('total-count').textContent=entries.length;
+  document.getElementById('total-badge2').textContent=entries.length;
+  const grid=document.getElementById('admin-grid');
+  if(!filtered.length){
+    grid.innerHTML='<div class="empty-state">Brak zajęć w wybranej kategorii.</div>';
+    return;
+  }
+  grid.innerHTML=filtered.map(e=>`
+    <div class="admin-card" id="card-${e.id}">
+      <div class="card-strip" style="background:${catColor(e.cat)}"></div>
+      <div class="card-body">
+        <div class="card-cat" style="color:${catColor(e.cat)}">${catLabel(e.cat)}</div>
+        <div class="card-name">${e.name}</div>
+        <ul class="card-bullets">${e.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-sm" style="background:var(--gray-bg);border:1px solid var(--gray-line);color:var(--xnavy);font-family:var(--font);font-size:11px;cursor:pointer;border-radius:4px;padding:4px 10px" onclick="editEntry('${e.id}')">✎ Edytuj</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteEntry('${e.id}')">✕ Usuń</button>
+      </div>
+    </div>`).join('');
+}
+function editEntry(id){
+  const e=entries.find(x=>x.id===id);if(!e)return;
+  editId=id;
+  document.getElementById('f-name').value=e.name;
+  document.getElementById('f-cat').value=e.cat;
+  document.getElementById('bullet-list').innerHTML='';
+  e.bullets.forEach(b=>addBullet(b));
+  if(!e.bullets.length)addBullet();
+  document.getElementById('form-label').textContent='✎ Edytuj zajęcia';
+  document.getElementById('save-btn').textContent='Zapisz zmiany';
+  document.getElementById('cancel-btn').style.display='';
+  document.querySelectorAll('.admin-card').forEach(c=>c.classList.remove('editing'));
+  document.getElementById('card-'+id)?.classList.add('editing');
+  document.getElementById('admin-sidebar').scrollTop=0;
+  document.getElementById('f-name').focus();
+}
+function deleteEntry(id){
+  if(!confirm('Usunąć te zajęcia z bazy?'))return;
+  entries=entries.filter(e=>e.id!==id);
+  if(editId===id)cancelEdit();
+  renderGrid();
+}
+
+// ─── EXPORT / IMPORT ─────────────────────────────────────────
+function exportDB(){
+  const data={version:1,savedAt:new Date().toISOString(),entries};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`opisy-zajec-${new Date().toISOString().slice(0,10)}.xfg`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importDB(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.entries)throw new Error('Nieprawidłowy format');
+      entries=data.entries;
+      cancelEdit();renderGrid();
+      alert(`Wczytano: ${entries.length} zajęć.`);
+    }catch(err){alert('Błąd: '+err.message);}
+    event.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+// ─── BOOT ─────────────────────────────────────────────────────
+// Focus login field on load
+window.addEventListener('load',()=>document.getElementById('inp-login').focus());
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&editId)cancelEdit();});
+</script>
+</body>
+</html>

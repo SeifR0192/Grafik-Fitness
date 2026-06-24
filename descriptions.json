@@ -1,0 +1,274 @@
+{
+  "version": 1,
+  "savedAt": "2026-06-24T08:41:51.190Z",
+  "entries": [
+    {
+      "id": "turbo-pupa",
+      "name": "Turbo Pupa",
+      "cat": "strength",
+      "bullets": [
+        "Trening ukierunkowany na wzmocnienie i ujędrnienie dolnych partii ciała, realizowany w strefie maszyn oraz w formie obwodów treningowych",
+        "Zajęcia pomagają wyrzeźbić nogi i pośladki, poprawiając siłę oraz wygląd sylwetki"
+      ]
+    },
+    {
+      "id": "bpu",
+      "name": "BPU",
+      "cat": "strength",
+      "bullets": [
+        "Trening funkcjonalny ukierunkowany na dolne partie ciała oraz mięśnie brzucha",
+        "Ćwiczenia wykonywane są w formie klasycznej lub interwałowej, poprawiając jędrność i wytrzymałość mięśniową",
+        "Zajęcia wspierają modelowanie sylwetki i redukcję tkanki tłuszczowej"
+      ]
+    },
+    {
+      "id": "gt-training",
+      "name": "GT Training Strength®",
+      "cat": "strength",
+      "bullets": [
+        "Trening siłowy skoncentrowany na budowaniu mocy i wytrzymałości mięśniowej",
+        "Zajęcia wykorzystują wolne ciężary oraz ćwiczenia funkcjonalne",
+        "Program ukierunkowany na rozwój siły całego ciała"
+      ]
+    },
+    {
+      "id": "gimnastyka",
+      "name": "Gimnastyka odchudzająca",
+      "cat": "strength",
+      "bullets": [
+        "Trening o umiarkowanej intensywności, łączący ćwiczenia cardio i wzmacniające",
+        "Zajęcia wspierają redukcję tkanki tłuszczowej oraz poprawę ogólnej sprawności",
+        "Forma ruchu odpowiednia dla osób rozpoczynających aktywność"
+      ]
+    },
+    {
+      "id": "cardio-training",
+      "name": "Cardio Training",
+      "cat": "cardio",
+      "bullets": [
+        "Intensywny trening wytrzymałościowy oparty na prostych, dynamicznych ruchach",
+        "Zajęcia rozwijają szybkość, skoczność i wydolność organizmu",
+        "Skuteczna forma spalania kalorii i poprawy kondycji"
+      ]
+    },
+    {
+      "id": "hiit-step",
+      "name": "HIIT STEP®",
+      "cat": "cardio",
+      "bullets": [
+        "Interwałowy trening o wysokiej intensywności z wykorzystaniem stepu",
+        "Dynamiczne sekwencje poprawiają wydolność organizmu i skutecznie przyspieszają spalanie kalorii",
+        "Intensywna forma pracy nad kondycją i siłą nóg"
+      ]
+    },
+    {
+      "id": "jiu-jitsu",
+      "name": "Jiu-Jitsu",
+      "cat": "spec",
+      "bullets": [
+        "Zajęcia sztuk walki koncentrujące się na technikach chwytów, dźwigni, duszeń oraz skutecznej samoobronie bez użycia bezpośrednich ciosów",
+        "Trening rozwija siłę, koordynację ruchową, wydolność oraz uczy kontroli przeciwnika",
+        "Doskonała forma aktywności dla osób chcących poprawić sprawność fizyczną i zdobyć praktyczne umiejętności samoobrony"
+      ]
+    },
+    {
+      "id": "aerial-silks",
+      "name": "Aerial Silks",
+      "cat": "spec",
+      "bullets": [
+        "Akrobatyczne zajęcia wykonywane na specjalnych materiałach zawieszonych pod sufitem",
+        "Trening rozwija koordynację, elastyczność oraz wzmacnia mięśnie całego ciała",
+        "Uczestnicy uczą się podstawowych figur i przejść w powietrzu pod okiem instruktora"
+      ]
+    },
+    {
+      "id": "aktywny-senior",
+      "name": "Aktywny Senior",
+      "cat": "spec",
+      "bullets": [
+        "Prozdrowotne zajęcia dla osób starszych oraz po urazach",
+        "Trening poprawia sprawność, równowagę i wydolność organizmu",
+        "Bezpieczna forma aktywności w spokojnym tempie"
+      ]
+    },
+    {
+      "id": "trx",
+      "name": "TRX®",
+      "cat": "spec",
+      "bullets": [
+        "Trening w podwieszeniu z wykorzystaniem taśm",
+        "Ćwiczenia angażują mięśnie głębokie i poprawiają stabilizację",
+        "Skuteczny sposób na wzmocnienie i wyrzeźbienie sylwetki"
+      ]
+    },
+    {
+      "id": "samoobrona",
+      "name": "Podstawy samoobrony",
+      "cat": "spec",
+      "bullets": [
+        "Zajęcia uczące praktycznych technik obronnych i reakcji w sytuacjach zagrożenia",
+        "Trening buduje pewność siebie oraz poprawia sprawność fizyczną",
+        "Odpowiedni dla kobiet i mężczyzn"
+      ]
+    },
+    {
+      "id": "taniec-nowoczesny",
+      "name": "Taniec nowoczesny",
+      "cat": "dance",
+      "bullets": [
+        "Zajęcia taneczne łączące elementy tańca klasycznego, jazzowego i współczesnego",
+        "Uczestnicy pracują nad koordynacją, izolacjami ciała, precyzją wykonywania figur oraz ekspresją taneczną",
+        "Doskonała forma aktywności dla osób chcących rozwijać technikę tańca i sprawność ruchową"
+      ]
+    },
+    {
+      "id": "zumba",
+      "name": "Zumba®",
+      "cat": "dance",
+      "bullets": [
+        "Taneczny trening fitness w rytmach latynoskich",
+        "Krótkie, powtarzalne choreografie poprawiają kondycję i wspierają spalanie kalorii",
+        "Zajęcia łączą aktywność fizyczną z dobrą zabawą"
+      ]
+    },
+    {
+      "id": "step-basic",
+      "name": "Step Basic",
+      "cat": "dance",
+      "bullets": [
+        "Podstawowe zajęcia choreograficzne z wykorzystaniem platformy step",
+        "Proste układy pozwalają rozpocząć przygodę ze stepem w bezpiecznej i przystępnej formie",
+        "Trening wzmacnia nogi i poprawia wydolność"
+      ]
+    },
+    {
+      "id": "hip-hop",
+      "name": "Hip Hop",
+      "cat": "dance",
+      "bullets": [
+        "Zajęcia oparte na nowoczesnych choreografiach w stylu hip hop",
+        "Dynamiczne kombinacje ruchów poprawiają kondycję, rytmikę i kontrolę ciała",
+        "Trening rozwijający pewność siebie oraz wyczucie muzyki"
+      ]
+    },
+    {
+      "id": "yin-joga",
+      "name": "Yin Joga",
+      "cat": "mind",
+      "bullets": [
+        "Spokojne i regenerujące zajęcia oparte na dłuższym pozostawaniu w pozycjach oraz świadomym rozluźnianiu ciała",
+        "Trening pomaga zmniejszyć napięcia, poprawić elastyczność i wyciszyć układ nerwowy"
+      ]
+    },
+    {
+      "id": "stretching",
+      "name": "Stretching",
+      "cat": "mind",
+      "bullets": [
+        "Spokojne zajęcia skupione na rozciąganiu i regeneracji mięśni",
+        "Pomagają zwiększyć zakres ruchu w stawach oraz zmniejszyć napięcie powstałe po treningu",
+        "Doskonałe uzupełnienie każdej aktywności fizycznej"
+      ]
+    },
+    {
+      "id": "body-art",
+      "name": "Body Art®",
+      "cat": "mind",
+      "bullets": [
+        "Licencjonowany koncept łączący elementy jogi, oddechu i płynnego ruchu",
+        "Trening wzmacnia ciało, poprawia koordynację oraz świadomość ruchu",
+        "Zajęcia budują harmonię między ciałem a umysłem"
+      ]
+    },
+    {
+      "id": "power-joga",
+      "name": "Power Joga",
+      "cat": "mind",
+      "bullets": [
+        "Dynamiczna odmiana jogi łącząca płynne przejścia między asanami z elementami wzmacniania",
+        "Zajęcia rozwijają siłę, mobilność i stabilizację całego ciała",
+        "Intensywniejsza forma pracy nad sylwetką i koncentracją"
+      ]
+    },
+    {
+      "id": "mobility",
+      "name": "Mobility",
+      "cat": "mind",
+      "bullets": [
+        "Zajęcia poprawiające ruchomość stawów, elastyczność mięśni oraz jakość ruchu całego ciała",
+        "Trening pomaga redukować napięcia i zwiększać zakresy ruchu",
+        "Idealna forma zajęć dla osób chcących poruszać się swobodniej i sprawniej"
+      ]
+    },
+    {
+      "id": "indoor-cycling",
+      "name": "Indoor Cycling",
+      "cat": "cycling",
+      "bullets": [
+        "Intensywny trening wytrzymałościowy na rowerach stacjonarnych prowadzony w rytm muzyki",
+        "Zajęcia poprawiają kondycję, wzmacniają dolne partie ciała i wspierają spalanie tkanki tłuszczowej",
+        "Intensywność regulowana jest indywidualnie przez uczestników"
+      ]
+    },
+    {
+      "id": "express-obwod",
+      "name": "Express Obwód",
+      "cat": "express",
+      "bullets": [
+        "Dynamiczny trening wytrzymałościowy w skróconej formule",
+        "Intensywne bloki ćwiczeń pozwalają szybko podnieść tętno i spalić kalorie",
+        "Maksimum efektu w minimalnym czasie"
+      ]
+    },
+    {
+      "id": "express-posladki",
+      "name": "Express Pośladki",
+      "cat": "express",
+      "bullets": [
+        "Krótki, skoncentrowany trening modelujący i wzmacniający mięśnie pośladkowe",
+        "Zajęcia łączą ćwiczenia siłowe i izometryczne, poprawiając jędrność oraz stabilizację bioder",
+        "Intensywna forma pracy nad dolnymi partiami ciała"
+      ]
+    },
+    {
+      "id": "express-brzuch",
+      "name": "Express Brzuch",
+      "cat": "express",
+      "bullets": [
+        "Krótki trening skupiony wyłącznie na mięśniach brzucha i core",
+        "Intensywna praca w krótkiej formie czasowej",
+        "Doskonałe uzupełnienie innych zajęć"
+      ]
+    },
+    {
+      "id": "express-cardio",
+      "name": "Express Cardio",
+      "cat": "express",
+      "bullets": [
+        "Krótki, dynamiczny trening wytrzymałościowy oparty na ćwiczeniach podnoszących tętno",
+        "Zajęcia poprawiają kondycję i wspierają spalanie tkanki tłuszczowej w skróconej formule",
+        "Idealne dla osób, które chcą szybko i efektywnie wykorzystać czas treningu"
+      ]
+    },
+    {
+      "id": "express-stretch",
+      "name": "Express Stretch",
+      "cat": "express",
+      "bullets": [
+        "Skrócona forma zajęć rozciągających skoncentrowana na najważniejszych grupach mięśniowych",
+        "Trening poprawia mobilność, zmniejsza napięcie i wspiera regenerację organizmu",
+        "Doskonałe uzupełnienie treningu siłowego i cardio"
+      ]
+    },
+    {
+      "id": "xstart",
+      "name": "X START",
+      "cat": "xstart",
+      "bullets": [
+        "Zajęcia przeznaczone głównie dla osób początkujących lub wracających do aktywności po dłuższej przerwie",
+        "Pomagają w budowaniu pewności siebie, poprawie koordynacji oraz stopniowym zwiększaniu sprawności fizycznej",
+        "Cały proces trwa 4 tygodnie — Cardio, Funkcjonalna, Maszyny, ABS & Stretching"
+      ]
+    }
+  ]
+}
