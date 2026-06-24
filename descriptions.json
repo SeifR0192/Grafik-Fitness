@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "savedAt": "2026-06-24T00:00:00.000Z",
+  "savedAt": "2026-06-24T13:51:55.556Z",
   "entries": [
     {
       "id": "joga",
@@ -1147,6 +1147,15 @@
         "Zajęcia przeznaczone głównie dla osób początkujących lub wracających do aktywności fizycznej po dłuższej przerwie",
         "Pomagają w budowaniu pewności siebie, poprawie koordynacji oraz stopniowym zwiększaniu sprawności fizycznej",
         "Cały proces trwa 4 tygodnie — Cardio, Funkcjonalna, Maszyny, ABS & Stretching"
+      ]
+    },
+    {
+      "id": "mqs4tqpoaofamdaf7r",
+      "name": "Abb",
+      "cat": "mind",
+      "bullets": [
+        "Ciekawostka",
+        "Test"
       ]
     }
   ]
