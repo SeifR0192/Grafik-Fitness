@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "savedAt": "2026-06-24T13:51:55.556Z",
+  "savedAt": "2026-06-24T14:39:47.743Z",
   "entries": [
     {
       "id": "joga",
@@ -654,7 +654,7 @@
     {
       "id": "hyrox",
       "name": "HYROX®",
-      "cat": "hyrox",
+      "cat": "spec",
       "bullets": [
         "Intensywne zajęcia funkcjonalne łączące bieganie z ćwiczeniami siłowo-wytrzymałościowymi w formie treningu obwodowego",
         "Trening rozwija kondycję, siłę oraz odporność organizmu, przygotowując do codziennej aktywności i udziału w zawodach HYROX",
@@ -1147,15 +1147,6 @@
         "Zajęcia przeznaczone głównie dla osób początkujących lub wracających do aktywności fizycznej po dłuższej przerwie",
         "Pomagają w budowaniu pewności siebie, poprawie koordynacji oraz stopniowym zwiększaniu sprawności fizycznej",
         "Cały proces trwa 4 tygodnie — Cardio, Funkcjonalna, Maszyny, ABS & Stretching"
-      ]
-    },
-    {
-      "id": "mqs4tqpoaofamdaf7r",
-      "name": "Abb",
-      "cat": "mind",
-      "bullets": [
-        "Ciekawostka",
-        "Test"
       ]
     }
   ]
