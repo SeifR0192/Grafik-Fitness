@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "savedAt": "2026-06-30T11:31:35.106Z",
+  "savedAt": "2026-06-30T14:30:11.883Z",
   "categories": [
     {
       "id": "mind",
@@ -46,11 +46,6 @@
       "id": "xstart",
       "label": "X Start",
       "color": "#052d46"
-    },
-    {
-      "id": "test",
-      "label": "Test",
-      "color": "#060b0f"
     }
   ],
   "entries": [
@@ -1199,16 +1194,6 @@
         "Zajęcia przeznaczone głównie dla osób początkujących lub wracających do aktywności fizycznej po dłuższej przerwie",
         "Pomagają w budowaniu pewności siebie, poprawie koordynacji oraz stopniowym zwiększaniu sprawności fizycznej",
         "Cały proces trwa 4 tygodnie — Cardio, Funkcjonalna, Maszyny, ABS & Stretching"
-      ]
-    },
-    {
-      "id": "mr0kgds7pexpukh8tvs",
-      "name": "Test",
-      "cat": "test",
-      "bullets": [
-        "1",
-        "2",
-        "Test3"
       ]
     }
   ]
