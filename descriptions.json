@@ -1,6 +1,58 @@
 {
   "version": 1,
-  "savedAt": "2026-06-24T14:39:47.743Z",
+  "savedAt": "2026-06-30T11:31:35.106Z",
+  "categories": [
+    {
+      "id": "mind",
+      "label": "Body & Mind",
+      "color": "#5B8DD9"
+    },
+    {
+      "id": "dance",
+      "label": "Taneczne",
+      "color": "#D4559A"
+    },
+    {
+      "id": "spec",
+      "label": "Specjalistyczne",
+      "color": "#D4701F"
+    },
+    {
+      "id": "cycling",
+      "label": "Rowerowe",
+      "color": "#2AA68C"
+    },
+    {
+      "id": "cardio",
+      "label": "Cardio",
+      "color": "#C8292B"
+    },
+    {
+      "id": "strength",
+      "label": "Wzmacniające",
+      "color": "#4C6EAA"
+    },
+    {
+      "id": "express",
+      "label": "Express Class",
+      "color": "#E0A020"
+    },
+    {
+      "id": "outdoor",
+      "label": "Outdoor",
+      "color": "#3A9E5F"
+    },
+    {
+      "id": "xstart",
+      "label": "X Start",
+      "color": "#052d46"
+    },
+    {
+      "id": "test",
+      "label": "Test",
+      "color": "#060b0f"
+    }
+  ],
   "entries": [
     {
       "id": "joga",
@@ -1147,6 +1199,16 @@
         "Zajęcia przeznaczone głównie dla osób początkujących lub wracających do aktywności fizycznej po dłuższej przerwie",
         "Pomagają w budowaniu pewności siebie, poprawie koordynacji oraz stopniowym zwiększaniu sprawności fizycznej",
         "Cały proces trwa 4 tygodnie — Cardio, Funkcjonalna, Maszyny, ABS & Stretching"
+      ]
+    },
+    {
+      "id": "mr0kgds7pexpukh8tvs",
+      "name": "Test",
+      "cat": "test",
+      "bullets": [
+        "1",
+        "2",
+        "Test3"
       ]
     }
   ]
