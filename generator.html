@@ -25,7 +25,6 @@ body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-he
 
 #main{display:flex;flex:1;overflow:hidden;height:calc(100vh - 58px)}
 
-/* SIDEBAR */
 #gen-sidebar{width:280px;background:white;border-right:1px solid var(--gray-line);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
 .sb-section{padding:14px;border-bottom:1px solid var(--gray-line)}
 .sb-title{font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-mid);margin-bottom:10px}
@@ -35,6 +34,36 @@ body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-he
 .ctrl-row{display:flex;gap:6px}
 .ctrl-btn{flex:1;padding:5px;border-radius:4px;background:var(--gray-bg);border:1px solid var(--gray-line);font-size:11px;font-weight:600;cursor:pointer;color:var(--xnavy);font-family:var(--font);transition:all .15s;text-align:center}
 .ctrl-btn:hover{border-color:var(--xblue);color:var(--xblue)}
+.search-field{
+  margin-bottom:10px;
+}
+
+.search-field label{
+  display:block;
+  font-size:10px;
+  font-weight:700;
+  color:var(--gray-mid);
+  margin-bottom:4px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.search-field input{
+  width:100%;
+  padding:7px 9px;
+  border:1px solid var(--gray-line);
+  border-radius:5px;
+  font-family:var(--font);
+  font-size:12.5px;
+  color:var(--xnavy);
+  outline:none;
+  background:var(--gray-bg);
+}
+
+.search-field input:focus{
+  border-color:var(--xblue);
+  background:white;
+}
 
 .class-pick-item{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--gray-line);cursor:pointer;transition:background .1s;user-select:none}
 .class-pick-item:hover{background:var(--gray-bg)}
@@ -45,7 +74,6 @@ body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-he
 .pick-check{width:16px;height:16px;border:2px solid var(--gray-line);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;transition:all .15s}
 .class-pick-item.checked .pick-check{background:var(--xblue);border-color:var(--xblue);color:white}
 
-/* CANVAS */
 #gen-canvas{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px}
 #gen-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .count-badge{background:var(--xnavy);color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px}
@@ -74,7 +102,6 @@ body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-he
 
 .empty-state{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:60px 20px;color:var(--gray-mid);text-align:center;font-size:13px;line-height:1.6}
 
-/* LOADING OVERLAY */
 #loading-overlay{position:fixed;inset:0;background:var(--xnavy);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:16px;transition:opacity .3s}
 #loading-overlay.hidden{opacity:0;pointer-events:none}
 .loading-logo{font-weight:800;font-size:24px;color:white;display:flex;align-items:center;gap:5px}
@@ -85,7 +112,6 @@ body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-he
 .loading-bar-fill{height:100%;background:linear-gradient(90deg,var(--xred),var(--xblue));border-radius:2px;animation:load 1.2s ease-in-out infinite}
 @keyframes load{0%{width:0%;margin-left:0}50%{width:80%;margin-left:10%}100%{width:0%;margin-left:100%}}
 
-/* PRINT */
 @media print{
   @page{margin:10mm;size:A4}
   html,body{height:auto!important;overflow:visible!important;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -102,15 +128,14 @@ body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-he
 </head>
 <body>
 
-<!-- LOADING OVERLAY -->
 <div id="loading-overlay">
-  <div class="loading-logo"><span class="loading-logo-x">X</span><span>treme</span> Generator</div>
+  <div class="loading-logo">Generator opisów</div>
   <div class="loading-bar"><div class="loading-bar-fill"></div></div>
   <div class="loading-text">Pobieranie bazy zajęć...</div>
 </div>
 
 <div id="topbar">
-  <div class="logo"><span class="logo-x">X</span><span>treme</span><span style="opacity:.4;font-weight:300;font-size:14px;margin:0 4px">|</span>Generator Opisów</div>
+  <div class="logo">Generator Opisów</div>
   <div class="sep"></div>
   <div class="sync-info">
     <div class="sync-dot loading" id="sync-dot"></div>
@@ -124,10 +149,16 @@ body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-he
     <div class="sb-section">
       <div class="sb-title">Filtruj kategorie</div>
       <div class="gen-filter-btns" id="cat-filters"></div>
-      <div class="ctrl-row">
-        <div class="ctrl-btn" onclick="selectAllVisible()">Zaznacz widoczne</div>
-        <div class="ctrl-btn" onclick="clearAll()">Odznacz wszystkie</div>
-      </div>
+
+        <div class="search-field">
+          <label>Szukaj zajęć</label>
+          <input type="search" id="class-search" placeholder="np. zumba, pilates..." oninput="renderPickList()">
+        </div>
+
+        <div class="ctrl-row">
+          <div class="ctrl-btn" onclick="selectAllVisible()">Zaznacz widoczne</div>
+          <div class="ctrl-btn" onclick="clearAll()">Odznacz wszystkie</div>
+        </div>
     </div>
     <div id="pick-list"></div>
   </div>
@@ -135,6 +166,7 @@ body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-he
   <div id="gen-canvas">
     <div id="gen-toolbar">
       <span class="count-badge" id="sel-count">0 zaznaczonych</span>
+      <span class="sync-info" id="schedule-import-info" style="display:none"></span>
       <div class="layout-toggle">
         <button class="layout-btn active" onclick="setLayout('grid')">⊞ Siatka</button>
         <button class="layout-btn" onclick="setLayout('list')">☰ Lista</button>
@@ -149,76 +181,102 @@ body{font-family:var(--font);background:var(--gray-bg);color:var(--xnavy);min-he
 </div>
 
 <script>
-// ─── CONFIG ──────────────────────────────────────────────────
-// URL do pliku descriptions.json w repozytorium GitHub
-// Aby zaktualizować bazę: wgraj nowy plik descriptions.json do repo i odśwież stronę
 const DB_URL = 'https://raw.githubusercontent.com/SeifR0192/Grafik-Fitness/main/descriptions.json';
 
-// ─── CATEGORIES ──────────────────────────────────────────────
-const CATS={
-  mind:    {label:'Body & Mind',    color:'#5B8DD9'},
-  dance:   {label:'Taneczne',       color:'#D4559A'},
-  spec:    {label:'Specjalistyczne',color:'#D4701F'},
-  cycling: {label:'Rowerowe',       color:'#2AA68C'},
-  cardio:  {label:'Cardio',         color:'#C8292B'},
-  strength:{label:'Wzmacniające',   color:'#4C6EAA'},
-  express: {label:'Express',        color:'#E0A020'},
-  outdoor: {label:'Outdoor',        color:'#3A9E5F'},
-  xstart:  {label:'X Start',        color:'#052d46'},
-  hyrox:   {label:'HYROX®',         color:'#8B2FC9'},
-  licensed:{label:'Licencjonowane', color:'#146496'},
-  other:   {label:'Inne',           color:'#6B7888'},
-};
-function catColor(cat){return(CATS[cat]||CATS.other).color}
-function catLabel(cat){return(CATS[cat]||CATS.other).label}
+const FALLBACK_CATEGORIES=[
+  {id:'mind',label:'Body & Mind',color:'#5B8DD9'},
+  {id:'dance',label:'Taneczne',color:'#D4559A'},
+  {id:'spec',label:'Specjalistyczne',color:'#D4701F'},
+  {id:'cycling',label:'Rowerowe',color:'#2AA68C'},
+  {id:'cardio',label:'Cardio',color:'#C8292B'},
+  {id:'strength',label:'Wzmacniające',color:'#4C6EAA'},
+  {id:'express',label:'Express Class',color:'#E0A020'},
+  {id:'outdoor',label:'Outdoor',color:'#3A9E5F'},
+  {id:'xstart',label:'X Start',color:'#052d46'},
+  {id:'other',label:'Inne',color:'#6B7888'}
+];
 
-// ─── STATE ───────────────────────────────────────────────────
+let CATEGORIES=[...FALLBACK_CATEGORIES];
+
+function getCat(catId){
+  return CATEGORIES.find(cat=>cat.id===catId) || {
+    id:'other',
+    label:'Inne',
+    color:'#6B7888'
+  };
+}
+
+function catColor(catId){
+  return getCat(catId).color;
+}
+
+function catLabel(catId){
+  return getCat(catId).label;
+}
+
 let entries=[];
 let selectedIds=new Set();
 let activeCat='';
 let currentLayout='grid';
 
-// ─── FETCH FROM GITHUB ───────────────────────────────────────
 async function loadDB(){
   const dot=document.getElementById('sync-dot');
   const lbl=document.getElementById('sync-label');
   try{
-    // cache:no-store forces GitHub to return fresh data, not CDN cache
     const res=await fetch(DB_URL,{cache:'no-store'});
     if(!res.ok)throw new Error(`HTTP ${res.status}`);
     const data=await res.json();
-    if(!data.entries)throw new Error('Nieprawidłowy format pliku');
-    entries=data.entries;
-    const updated=data.savedAt?new Date(data.savedAt).toLocaleDateString('pl-PL'):'—';
+
+      if(!Array.isArray(data.entries)){
+        throw new Error('Nieprawidłowy format pliku');
+      }
+
+      entries=data.entries;
+
+      if(Array.isArray(data.categories)&&data.categories.length){
+        CATEGORIES=data.categories;
+      }else{
+        const usedCats=new Set(entries.map(entry=>entry.cat).filter(Boolean));
+        CATEGORIES=FALLBACK_CATEGORIES.filter(cat=>usedCats.has(cat.id));
+
+        if(!CATEGORIES.length){
+          CATEGORIES=[...FALLBACK_CATEGORIES];
+        }
+      }
+
+      const updated=data.savedAt?new Date(data.savedAt).toLocaleDateString('pl-PL'):'—';
     dot.className='sync-dot ok';
     lbl.textContent=`Baza aktualna · ${entries.length} zajęć · ${updated}`;
   }catch(err){
-    // Fallback: jeśli GitHub niedostępny, pokaż komunikat
     dot.className='sync-dot err';
     lbl.textContent='Błąd pobierania bazy — sprawdź połączenie';
     entries=[];
+    CATEGORIES=[...FALLBACK_CATEGORIES];
     document.getElementById('pick-list').innerHTML=
       '<div style="padding:20px;font-size:12px;color:var(--xred);line-height:1.6">Nie udało się pobrać bazy zajęć.<br>Sprawdź połączenie z internetem i odśwież stronę.</div>';
   }finally{
-    // Hide loading overlay
     document.getElementById('loading-overlay').classList.add('hidden');
     buildCatFilters();
     renderPickList();
+    applyScheduleSelection();
   }
 }
 
-// ─── CATEGORY FILTERS ────────────────────────────────────────
 function buildCatFilters(){
-  const used=new Set(entries.map(e=>e.cat));
+  const used=new Set(entries.map(e=>e.cat).filter(Boolean));
   const container=document.getElementById('cat-filters');
+
   container.innerHTML=`<button class="gen-filter-btn active" data-cat="" onclick="setCat(this)">Wszystkie</button>`;
-  Object.entries(CATS).forEach(([id,cat])=>{
-    if(!used.has(id))return;
+
+  CATEGORIES.forEach(cat=>{
+    if(!used.has(cat.id))return;
+
     const btn=document.createElement('button');
     btn.className='gen-filter-btn';
-    btn.dataset.cat=id;
+    btn.dataset.cat=cat.id;
     btn.textContent=cat.label;
     btn.onclick=()=>setCat(btn);
+
     container.appendChild(btn);
   });
 }
@@ -229,10 +287,84 @@ function setCat(btn){
   renderPickList();
 }
 
-// ─── PICK LIST ───────────────────────────────────────────────
+function getVisibleEntries(){
+  const query=document.getElementById('class-search')?.value.toLowerCase().trim() || '';
+
+  const sorted=[...entries].sort((a,b)=>{
+    return a.cat.localeCompare(b.cat) || a.name.localeCompare(b.name,'pl');
+  });
+
+  let filtered=activeCat
+    ? sorted.filter(e=>e.cat===activeCat)
+    : sorted;
+
+  if(query){
+    filtered=filtered.filter(e=>e.name.toLowerCase().includes(query));
+  }
+
+  return filtered;
+}
+
+function normalizeClassName(name){
+  return (name||'')
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g,' ');
+}
+
+function applyScheduleSelection(){
+  const info=document.getElementById('schedule-import-info');
+
+  try{
+    const raw=localStorage.getItem('xfg_schedule_class_names');
+
+    if(!raw){
+      if(info)info.style.display='none';
+      return;
+    }
+
+    const data=JSON.parse(raw);
+    const names=Array.isArray(data.names)?data.names:[];
+
+    if(!names.length){
+      if(info)info.style.display='none';
+      return;
+    }
+
+    const scheduleNames=new Set(
+      names.map(normalizeClassName).filter(Boolean)
+    );
+
+    let matchedCount=0;
+
+    entries.forEach(entry=>{
+      const entryName=normalizeClassName(entry.name);
+
+      if(scheduleNames.has(entryName)){
+        selectedIds.add(entry.id);
+        matchedCount++;
+      }
+    });
+
+    renderPickList();
+    renderOutput();
+
+    if(info){
+      info.style.display='';
+      info.textContent=`Zaczytano ${matchedCount} z ${scheduleNames.size} zajęć z grafiku`;
+    }
+  }catch(err){
+    console.warn('Nie udało się zaczytać zajęć z grafiku:',err);
+
+    if(info){
+      info.style.display='';
+      info.textContent='Nie udało się zaczytać zajęć z grafiku';
+    }
+  }
+}
+
 function renderPickList(){
-  const sorted=[...entries].sort((a,b)=>a.cat.localeCompare(b.cat)||a.name.localeCompare(b.name));
-  const filtered=activeCat?sorted.filter(e=>e.cat===activeCat):sorted;
+  const filtered=getVisibleEntries();
   document.getElementById('pick-list').innerHTML=filtered.map(e=>`
     <div class="class-pick-item${selectedIds.has(e.id)?' checked':''}" onclick="togglePick('${e.id}')">
       <div class="pick-dot" style="background:${catColor(e.cat)}"></div>
@@ -241,7 +373,7 @@ function renderPickList(){
         <div class="pick-cat">${catLabel(e.cat)}</div>
       </div>
       <div class="pick-check">${selectedIds.has(e.id)?'✓':''}</div>
-    </div>`).join('') || '<div style="padding:16px;font-size:12px;color:var(--gray-mid)">Brak zajęć w tej kategorii.</div>';
+    </div>`).join('') || '<div style="padding:16px;font-size:12px;color:var(--gray-mid)">Brak zajęć dla wybranego filtra.</div>';
 }
 
 function togglePick(id){
@@ -249,13 +381,12 @@ function togglePick(id){
   renderPickList();renderOutput();
 }
 function selectAllVisible(){
-  const sorted=[...entries];
-  (activeCat?sorted.filter(e=>e.cat===activeCat):sorted).forEach(e=>selectedIds.add(e.id));
-  renderPickList();renderOutput();
+  getVisibleEntries().forEach(e=>selectedIds.add(e.id));
+  renderPickList();
+  renderOutput();
 }
 function clearAll(){selectedIds.clear();renderPickList();renderOutput();}
 
-// ─── OUTPUT ──────────────────────────────────────────────────
 function setLayout(l){
   currentLayout=l;
   document.getElementById('output-area').className='layout-'+l;
@@ -282,7 +413,6 @@ function renderOutput(){
   }).join('');
 }
 
-// ─── BOOT ─────────────────────────────────────────────────────
 loadDB();
 </script>
 </body>
